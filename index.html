@@ -26,6 +26,7 @@
     <div class="nav-inner">
       <a class="nav-link is-active" href="#dashboard" data-page-link="dashboard" aria-current="page">Dashboard</a>
       <a class="nav-link" href="#detail" data-page-link="detail">နေ့စဉ်စာအုပ် / Detail</a>
+      <a class="nav-link" href="#history" data-page-link="history">History</a>
     </div>
   </nav>
 
@@ -113,7 +114,7 @@
           <h1>နေ့စဉ်စာအုပ် / Detail</h1>
           <p>ရက်စွဲတစ်ရက်ချင်းစီအလိုက် မှတ်တမ်းတင်၊ ရှာဖွေ၊ ပြင်ဆင်နိုင်သည်။</p>
         </div>
-        <span class="storage-note"><span class="status-dot"></span> ဒီဘရောက်ဇာထဲတွင် အလိုအလျောက်သိမ်းဆည်းထားသည်</span>
+        <span class="storage-note"><span class="status-dot"></span> Browser JSON ထဲတွင် အမြဲတမ်းသိမ်းဆည်းထားသည်</span>
       </div>
 
       <section class="panel form-panel">
@@ -151,7 +152,7 @@
             </label>
             <label class="field movement-in-only" id="paid-field">
               <span>ပေးချေပြီးငွေ (ကျပ်)</span>
-              <input id="paid-amount" name="paidAmount" type="number" min="0" step="any" value="0" required>
+              <input id="paid-amount" name="paidAmount" type="number" inputmode="decimal" min="0" step="any" value="0" required>
             </label>
           </div>
 
@@ -214,6 +215,48 @@
         <div id="detail-list" class="deliveries-list"></div>
       </section>
       <p id="app-message" class="app-message" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="history-page" class="page-view" hidden>
+      <div class="intro detail-intro">
+        <div>
+          <p class="eyebrow">JSON မှတ်တမ်း</p>
+          <h1>History</h1>
+          <p>သိမ်းထားသော စာရင်းအားလုံးကို ရက်စွဲ၊ အမည်နှင့် ပစ္စည်းဖြင့် ရှာဖွေနိုင်သည်။</p>
+        </div>
+        <div class="history-actions">
+          <button class="button button-light" id="import-json-button" type="button">Fileထည့်ရန်</button>
+          <button class="button button-primary" id="export-json-button" type="button">Fileထုတ်ရန်</button>
+          <input id="import-json-input" type="file" accept=".json,application/json" hidden>
+        </div>
+      </div>
+
+      <section class="panel history-panel">
+        <div class="section-heading records-heading">
+          <div>
+            <p class="eyebrow">အသေးစိတ်မှတ်တမ်း</p>
+            <h2>စာရင်းအဟောင်းများ</h2>
+          </div>
+          <div class="filter-tools">
+            <label class="field filter-field search-field">
+              <span>ပစ္စည်း / အမည်ဖြင့် ရှာရန်</span>
+              <input id="history-filter-text" type="search" placeholder="အမည်ရိုက်ထည့်ပါ">
+            </label>
+            <label class="field filter-field">
+              <span>ရက်စွဲဖြင့် ရှာရန်</span>
+              <input id="history-filter-date" type="date">
+            </label>
+            <button class="button button-light clear-filter" id="history-clear-filter" type="button">အားလုံး</button>
+          </div>
+        </div>
+        <div id="history-empty" class="empty-state">
+          <span class="empty-icon" aria-hidden="true">▤</span>
+          <strong id="history-empty-title">စာရင်းမရှိသေးပါ</strong>
+          <span id="history-empty-description">Detail စာမျက်နှာတွင် စာရင်းသိမ်းပြီးနောက် History တွင်တွေ့ရပါမည်။</span>
+        </div>
+        <div id="history-list" class="deliveries-list"></div>
+      </section>
+      <p id="history-message" class="app-message" role="status" aria-live="polite"></p>
     </section>
   </main>
   <footer class="footer">Daily Audit <span>·</span> သင့်စက်၏ ဘရောက်ဇာတွင်သာ သိမ်းဆည်းထားသည်</footer>

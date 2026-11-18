@@ -67,14 +67,19 @@ function loadDeliveries() {
     return parsed.map(normalizeDelivery);
   } catch (error) {
     console.error("Could not load Daily Audit records.", error);
-    window.alert("သိမ်းထားသောစာရင်းကို ဖတ်မရပါ။ Browser storage ကို စစ်ဆေးပါ။");
+    localStorage.removeItem(STORAGE_KEY);
+    window.alert("သိမ်းထားသောစာရင်းပျက်နေသဖြင့် မမှန်ကန်သောအချက်အလက်ကို ဖယ်ရှားပြီးပြီ။");
     return [];
   }
 }
 
 function saveDeliveries() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(deliveries));
+    const savedValue = JSON.stringify(deliveries);
+    localStorage.setItem(STORAGE_KEY, savedValue);
+    if (localStorage.getItem(STORAGE_KEY) !== savedValue) {
+      throw new Error("Browser storage did not confirm the saved value.");
+    }
     return true;
   } catch (error) {
     console.error("Could not save Daily Audit records.", error);
@@ -83,17 +88,24 @@ function saveDeliveries() {
   }
 }
 
+async function requestPersistentStorage() {
+  if (!("storage" in navigator) || !navigator.storage.persist) return;
+  try {
+    await navigator.storage.persist();
+  } catch (error) {
+    console.warn("Could not request persistent browser storage.", error);
+  }
+}
+
 function createItemRow(item = {}) {
   const row = document.createElement("tr");
   row.innerHTML = `
     <td><input class="item-input item-name" type="text" maxlength="100" placeholder="ဥပမာ - ဆန်" aria-label="ပစ္စည်းအမည်" required></td>
-    <td><input class="item-input numeric item-quantity" type="number" min="0.01" step="any" value="1" aria-label="အရေအတွက်" required></td>
-    <td><input class="item-input numeric item-price" type="number" min="0" step="any" placeholder="0" aria-label="တစ်ခုတန်ဖိုး" required></td>
+    <td><input class="item-input numeric item-quantity" type="number" inputmode="decimal" min="0.01" step="any" value="${item.quantity ?? 1}" placeholder="1" aria-label="အရေအတွက်" required></td>
+    <td><input class="item-input numeric item-price" type="number" inputmode="decimal" min="0" step="any" value="${item.unitPrice ?? ""}" placeholder="0" aria-label="တစ်ခုတန်ဖိုး" required></td>
     <td><span class="line-total">0</span></td>
     <td><button class="icon-button remove-item" type="button" aria-label="ဤပစ္စည်းကို ဖယ်ရှားရန်">×</button></td>`;
   row.querySelector(".item-name").value = item.name || "";
-  row.querySelector(".item-quantity").value = item.quantity || 1;
-  row.querySelector(".item-price").value = item.unitPrice ?? "";
   itemsBody.append(row);
   return row;
 }
@@ -128,17 +140,20 @@ function showMessage(text) {
 }
 
 function showPage(pageName) {
-  const isDashboard = pageName !== "detail";
+  const isDashboard = pageName === "dashboard";
+  const isHistory = pageName === "history";
   document.getElementById("dashboard-page").hidden = !isDashboard;
-  document.getElementById("detail-page").hidden = isDashboard;
+  document.getElementById("detail-page").hidden = isDashboard || isHistory;
+  document.getElementById("history-page").hidden = !isHistory;
   document.querySelectorAll("[data-page-link]").forEach((link) => {
-    const active = link.dataset.pageLink === (isDashboard ? "dashboard" : "detail");
+    const active = link.dataset.pageLink === pageName;
     link.classList.toggle("is-active", active);
     if (active) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
   if (isDashboard) renderDashboard();
-  else renderDetail();
+  else if (pageName === "detail") renderDetail();
+  else renderHistory();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -249,6 +264,28 @@ function renderDetail() {
   renderList(document.getElementById("detail-list"), shown);
 }
 
+function renderHistory() {
+  const searchDate = document.getElementById("history-filter-date").value;
+  const searchText = document.getElementById("history-filter-text").value.trim().toLocaleLowerCase();
+  const shown = sortedDeliveries(deliveries.filter((delivery) => {
+    if (searchDate && delivery.date !== searchDate) return false;
+    if (!searchText) return true;
+    const itemMatch = delivery.items.some((item) => item.name.toLocaleLowerCase().includes(searchText));
+    const partnerMatch = delivery.supplier.toLocaleLowerCase().includes(searchText);
+    const preparedByMatch = delivery.preparedBy.toLocaleLowerCase().includes(searchText);
+    return itemMatch || partnerMatch || preparedByMatch;
+  }));
+
+  const empty = shown.length === 0;
+  document.getElementById("history-empty").hidden = !empty;
+  const hasFilter = Boolean(searchDate || searchText);
+  document.getElementById("history-empty-title").textContent = hasFilter ? "လိုက်ဖက်သောမှတ်တမ်းမရှိပါ" : "စာရင်းမရှိသေးပါ";
+  document.getElementById("history-empty-description").textContent = hasFilter
+    ? "ရှာဖွေမှုအချက်အလက်ကို ပြောင်း၍ ထပ်မံကြည့်ရှုပါ။"
+    : "Detail စာမျက်နှာတွင် စာရင်းသိမ်းပြီးနောက် History တွင်တွေ့ရပါမည်။";
+  renderList(document.getElementById("history-list"), shown);
+}
+
 function renderList(list, records) {
   list.replaceChildren();
   records.forEach((delivery) => list.append(createDeliveryCard(delivery)));
@@ -259,8 +296,21 @@ function formatCreatedAt(delivery) {
   const date = new Date(delivery.createdAt);
   if (Number.isNaN(date.getTime())) return "အချိန် မမှတ်တမ်းတင်ထားပါ";
   return new Intl.DateTimeFormat("my-MM", {
-    year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+    year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"
   }).format(date);
+}
+
+function formatCsvCreatedAt(delivery) {
+  if (!delivery.createdAt) return "";
+  const date = new Date(delivery.createdAt);
+  if (Number.isNaN(date.getTime())) return "";
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hour = String(date.getHours()).padStart(2, "0");
+  const minute = String(date.getMinutes()).padStart(2, "0");
+  const second = String(date.getSeconds()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 }
 
 function createDeliveryCard(delivery) {
@@ -443,11 +493,43 @@ function deleteDelivery(id) {
 function renderAll() {
   renderDashboard();
   renderDetail();
+  renderHistory();
 }
 
 function csvCell(value) {
   const text = String(value);
   return `"${text.replace(/"/g, '""')}"`;
+}
+
+function exportJson() {
+  const json = JSON.stringify(deliveries, null, 2);
+  const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `daily-audit-history-${localDateString(new Date())}.json`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  showMessage("JSON Backup ဖိုင်ကို ထုတ်ပြီးပါပြီ။");
+}
+
+async function importJson(file) {
+  if (!file) return;
+  try {
+    const parsed = JSON.parse(await file.text());
+    const source = Array.isArray(parsed) ? parsed : parsed.deliveries;
+    if (!Array.isArray(source)) throw new Error("JSON data is not a deliveries list.");
+    const imported = source.map(normalizeDelivery);
+    deliveries = imported;
+    if (!saveDeliveries()) throw new Error("Could not save imported JSON data.");
+    renderAll();
+    showMessage(`JSON မှ စာရင်း ${imported.length} ခု ပြန်သိမ်းပြီးပါပြီ။`);
+  } catch (error) {
+    console.error("Could not import Daily Audit JSON.", error);
+    showMessage("JSON ဖိုင်ပုံစံမမှန်ပါ။ Backup ဖိုင်အမှန်ကို ရွေးပါ။");
+  }
 }
 
 function exportCsv() {
@@ -479,7 +561,7 @@ function exportCsv() {
     delivery.items.forEach((item) => {
       rows.push([
         delivery.date, delivery.movementType === "outgoing" ? "အထွက်" : "အဝင်",
-        delivery.truck, delivery.supplier, delivery.preparedBy, formatCreatedAt(delivery),
+        delivery.truck, delivery.supplier, delivery.preparedBy, formatCsvCreatedAt(delivery),
         status, paid, due, item.name, item.quantity, item.unitPrice, item.quantity * item.unitPrice
       ]);
     });
@@ -576,6 +658,7 @@ itemsBody.addEventListener("click", (event) => {
 });
 
 paidAmountInput.addEventListener("input", updateFormTotal);
+paidAmountInput.addEventListener("focus", () => paidAmountInput.select());
 document.getElementById("movement-type").addEventListener("change", syncMovementFields);
 filterDate.addEventListener("input", renderDetail);
 filterText.addEventListener("input", renderDetail);
@@ -583,6 +666,21 @@ document.getElementById("clear-filter").addEventListener("click", () => {
   filterDate.value = "";
   filterText.value = "";
   renderDetail();
+});
+document.getElementById("history-filter-date").addEventListener("input", renderHistory);
+document.getElementById("history-filter-text").addEventListener("input", renderHistory);
+document.getElementById("history-clear-filter").addEventListener("click", () => {
+  document.getElementById("history-filter-date").value = "";
+  document.getElementById("history-filter-text").value = "";
+  renderHistory();
+});
+document.getElementById("export-json-button").addEventListener("click", exportJson);
+document.getElementById("import-json-button").addEventListener("click", () => {
+  document.getElementById("import-json-input").click();
+});
+document.getElementById("import-json-input").addEventListener("change", (event) => {
+  importJson(event.target.files[0]);
+  event.target.value = "";
 });
 document.getElementById("cancel-edit").addEventListener("click", () => {
   resetForm();
@@ -604,9 +702,27 @@ document.querySelectorAll("[data-open-detail]").forEach((button) => {
     deliveryDate.focus();
   });
 });
-window.addEventListener("hashchange", () => showPage(window.location.hash === "#detail" ? "detail" : "dashboard"));
+window.addEventListener("hashchange", () => {
+  const pageName = ["detail", "history"].includes(window.location.hash.slice(1))
+    ? window.location.hash.slice(1)
+    : "dashboard";
+  showPage(pageName);
+});
+
+window.addEventListener("storage", (event) => {
+  if (event.key !== STORAGE_KEY && event.key !== null) return;
+  deliveries = loadDeliveries();
+  if (editingId && !deliveries.some((delivery) => delivery.id === editingId)) {
+    resetForm();
+  }
+  renderAll();
+});
 
 deliveryDate.value = localDateString(new Date());
 createItemRow();
 updateFormTotal();
-showPage(window.location.hash === "#detail" ? "detail" : "dashboard");
+const initialPage = ["detail", "history"].includes(window.location.hash.slice(1))
+  ? window.location.hash.slice(1)
+  : "dashboard";
+requestPersistentStorage();
+showPage(initialPage);
