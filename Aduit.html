@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="my">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f6fa">
+  <title>Daily Audit - Detail</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="Aduit.css">
+  <script src="auth.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body data-page="detail">
+  <header class="topbar">
+    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Menu ဖွင့်ရန်" aria-controls="main-nav" aria-expanded="false">☰</button>
+    <a class="brand" href="Dashboard.html" aria-label="Daily Audit Dashboard"><span class="brand-mark" aria-hidden="true">DA</span><span><span class="eyebrow brand-caption">နေ့စဉ်ပစ္စည်းစာရင်း</span><span class="brand-title">Daily Audit</span></span></a>
+    <div class="top-actions"><button class="button button-outline" id="export-button" type="button">Excel အတွက် CSV ထုတ်ရန်</button><a class="button button-light account-link" href="change.html">Password ပြောင်းရန်</a><button class="button button-light" id="logout-button" type="button">Logout</button></div>
+  </header>
+  <nav class="main-nav" id="main-nav" aria-label="အဓိကစာမျက်နှာများ"><div class="nav-inner"><a class="nav-link" href="Dashboard.html">Dashboard</a><a class="nav-link is-active" href="Aduit.html" aria-current="page">နေ့စဉ်စာအုပ် / Detail</a><a class="nav-link" href="History.html">History</a><a class="nav-link" href="change.html">Password ပြောင်းရန်</a></div></nav>
+  <button class="sidebar-backdrop" id="sidebar-backdrop" type="button" aria-label="Menu ပိတ်ရန်"></button>
+  <main class="page">
+    <section id="detail-page" class="page-view">
+      <div class="intro detail-intro"><div><p class="eyebrow">နေ့စဉ်ဝင်စာရင်း</p><h1>နေ့စဉ်စာအုပ် / Detail</h1><p>ရက်စွဲတစ်ရက်ချင်းစီအလိုက် မှတ်တမ်းတင်၊ ရှာဖွေ၊ ပြင်ဆင်နိုင်သည်။</p></div><span class="storage-note"><span class="status-dot"></span> Browser JSON ထဲတွင် အမြဲတမ်းသိမ်းဆည်းထားသည်</span></div>
+      <section class="panel form-panel">
+        <div class="section-heading"><div><p class="eyebrow" id="form-eyebrow">စာရင်းအသစ်</p><h2 id="form-title">ပစ္စည်းရောက်ရှိမှု မှတ်တမ်းတင်ရန်</h2></div><button class="button button-light cancel-edit" id="cancel-edit" type="button" hidden>ပြင်ဆင်မှု ပယ်ဖျက်ရန်</button></div>
+        <form id="delivery-form">
+          <div class="form-meta">
+            <label class="field"><span>ရောက်ရှိသည့်နေ့</span><input id="delivery-date" name="date" type="date" required></label>
+            <label class="field"><span>စာရင်းအမျိုးအစား</span><select id="movement-type" name="movementType"><option value="incoming">ပစ္စည်းအဝင်</option><option value="outgoing">ပစ္စည်းအထွက်</option></select></label>
+            <label class="field movement-in-only" id="truck-field"><span>ကားနံပါတ် / ကားအမည်</span><input id="truck-name" name="truck" type="text" maxlength="80" placeholder="ဥပမာ - 1A/1234" required></label>
+            <label class="field"><span id="partner-label">ပစ္စည်းပို့သူအမည်</span><input id="supplier-name" name="supplier" type="text" maxlength="100" placeholder="ပစ္စည်းပို့သူအမည်" required></label>
+            <label class="field"><span>စာရင်းပြုစုသူအမည်</span><input id="prepared-by" name="preparedBy" type="text" maxlength="100" placeholder="စာရင်းပြုစုသူအမည်" required></label>
+            <label class="field movement-in-only" id="paid-field"><span>ပေးချေပြီးငွေ (ကျပ်)</span><input id="paid-amount" name="paidAmount" type="number" inputmode="decimal" min="0" step="any" value="0" required></label>
+          </div>
+          <div class="items-heading"><div><h3>ပစ္စည်းများ <span id="item-type-count" class="item-type-count">၁ မျိုး</span></h3><p>ပစ္စည်းတစ်ခုချင်းစီ၏ အရေအတွက်နှင့် တစ်ခုတန်ဖိုးကို ထည့်ပါ။</p></div><button class="button button-light" id="add-item-button" type="button">＋ ပစ္စည်းထပ်ထည့်ရန်</button></div>
+          <div class="item-table-wrap"><table class="item-table"><thead><tr><th scope="col">ပစ္စည်းအမည်</th><th scope="col">အရေအတွက်</th><th scope="col">တစ်ခုတန်ဖိုး (ကျပ်)</th><th scope="col">စုစုပေါင်း (ကျပ်)</th><th scope="col"><span class="visually-hidden">ဖယ်ရှားရန်</span></th></tr></thead><tbody id="items-body"></tbody></table></div>
+          <div class="form-bottom"><div class="total-summary"><p class="total-preview">ပစ္စည်းစုစုပေါင်း <strong><span id="form-total">0</span> ကျပ်</strong></p><p class="due-preview">ပေးရန်ကျန် <strong><span id="form-due">0</span> ကျပ်</strong></p></div><button class="button button-primary" id="save-button" type="submit">စာရင်းသိမ်းရန်</button></div>
+        </form>
+      </section>
+      <section class="panel records-panel">
+        <div class="section-heading records-heading"><div><p class="eyebrow">အရင်စာရင်းများ</p><h2>နေ့စွဲအလိုက် ရှာဖွေရန် / ပြင်ဆင်ရန်</h2></div><div class="filter-tools"><label class="field filter-field search-field"><span>ပစ္စည်း / ပေးပို့သူနာမည်ဖြင့် ရှာရန်</span><input id="filter-text" type="search" placeholder="အမည်ရိုက်ထည့်ပါ"></label><label class="field filter-field"><span>ရက်စွဲဖြင့် ရှာရန်</span><input id="filter-date" type="date"></label><button class="button button-light clear-filter" id="clear-filter" type="button">အားလုံး</button></div></div>
+        <div id="detail-empty" class="empty-state"><span class="empty-icon" aria-hidden="true">▤</span><strong id="detail-empty-title">စာရင်းမရှိသေးပါ</strong><span id="detail-empty-description">အပေါ်က ဖောင်မှာ ပစ္စည်းစာရင်းအသစ် ထည့်နိုင်ပါတယ်။</span></div>
+        <div id="detail-list" class="deliveries-list"></div>
+      </section>
+      <p id="app-message" class="app-message" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+  <footer class="footer">Daily Audit <span>·</span> သင့်စက်၏ ဘရောက်ဇာတွင်သာ သိမ်းဆည်းထားသည်</footer>
+</body>
+</html>

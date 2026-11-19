@@ -1,5 +1,9 @@
 "use strict";
 
+if (document.body.dataset.page && localStorage.getItem("daily-audit-session-v1") !== "active") {
+  window.location.replace("login.html");
+}
+
 const STORAGE_KEY = "daily-audit-deliveries-v1";
 const form = document.getElementById("delivery-form");
 const itemsBody = document.getElementById("items-body");
@@ -7,9 +11,9 @@ const deliveryDate = document.getElementById("delivery-date");
 const filterDate = document.getElementById("filter-date");
 const filterText = document.getElementById("filter-text");
 const paidAmountInput = document.getElementById("paid-amount");
-const message = document.getElementById("app-message");
+const message = document.getElementById("app-message") || document.getElementById("history-message");
 const currency = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
-let deliveries = loadDeliveries();
+let deliveries = [];
 let editingId = null;
 let messageTimer;
 
@@ -22,6 +26,10 @@ function localDateString(date) {
 
 function formatMoney(value) {
   return currency.format(value);
+}
+
+function toMyanmarDigits(value) {
+  return String(value).replace(/\d/g, (digit) => "၀၁၂၃၄၅၆၇၈၉"[Number(digit)]);
 }
 
 function recordTotal(delivery) {
@@ -80,11 +88,54 @@ function saveDeliveries() {
     if (localStorage.getItem(STORAGE_KEY) !== savedValue) {
       throw new Error("Browser storage did not confirm the saved value.");
     }
+    fetch("/api/deliveries/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deliveries })
+    }).then(async (response) => {
+      if (!response.ok) throw new Error("Could not sync records to MySQL.");
+      const result = await response.json();
+      if (Array.isArray(result.deliveries)) {
+        deliveries = result.deliveries;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(deliveries));
+        renderAll();
+      }
+    }).catch((error) => {
+      console.error("Could not sync Daily Audit records to MySQL.", error);
+      window.alert("MySQL database ကို မချိတ်ဆက်နိုင်သဖြင့် browser cache တွင်သာ ရှိထားပါသည်။");
+    });
     return true;
   } catch (error) {
     console.error("Could not save Daily Audit records.", error);
     window.alert("စာရင်းသိမ်းမရပါ။ Browser storage နေရာလွတ်ကို စစ်ဆေးပါ။");
     return false;
+  }
+}
+
+async function loadDeliveriesFromDatabase() {
+  try {
+    const localSaved = localStorage.getItem(STORAGE_KEY);
+    let localRecords = [];
+    if (localSaved) {
+      const parsedLocal = JSON.parse(localSaved);
+      if (Array.isArray(parsedLocal)) localRecords = parsedLocal.map(normalizeDelivery);
+    }
+    const response = await fetch("/api/deliveries");
+    if (!response.ok) throw new Error("Could not load MySQL records.");
+    const result = await response.json();
+    if (Array.isArray(result.deliveries)) {
+      deliveries = result.deliveries.map(normalizeDelivery);
+      if (deliveries.length === 0 && localRecords.length > 0) {
+        deliveries = localRecords;
+        saveDeliveries();
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(deliveries));
+      renderAll();
+    }
+  } catch (error) {
+    console.error("Could not load MySQL records.", error);
+    deliveries = loadDeliveries();
+    renderAll();
   }
 }
 
@@ -101,8 +152,8 @@ function createItemRow(item = {}) {
   const row = document.createElement("tr");
   row.innerHTML = `
     <td><input class="item-input item-name" type="text" maxlength="100" placeholder="ဥပမာ - ဆန်" aria-label="ပစ္စည်းအမည်" required></td>
-    <td><input class="item-input numeric item-quantity" type="number" inputmode="decimal" min="0.01" step="any" value="${item.quantity ?? 1}" placeholder="1" aria-label="အရေအတွက်" required></td>
-    <td><input class="item-input numeric item-price" type="number" inputmode="decimal" min="0" step="any" value="${item.unitPrice ?? ""}" placeholder="0" aria-label="တစ်ခုတန်ဖိုး" required></td>
+    <td><input class="item-input numeric item-quantity" type="number" inputmode="decimal" enterkeyhint="next" min="0.01" step="any" value="${item.quantity ?? 1}" placeholder="1" aria-label="အရေအတွက်" required></td>
+    <td><input class="item-input numeric item-price" type="number" inputmode="decimal" enterkeyhint="next" min="0" step="any" value="${item.unitPrice ?? ""}" placeholder="0" aria-label="တစ်ခုတန်ဖိုး" required></td>
     <td><span class="line-total">0</span></td>
     <td><button class="icon-button remove-item" type="button" aria-label="ဤပစ္စည်းကို ဖယ်ရှားရန်">×</button></td>`;
   row.querySelector(".item-name").value = item.name || "";
@@ -119,7 +170,11 @@ function getFormItems() {
 }
 
 function updateFormTotal() {
+  if (!itemsBody || !paidAmountInput) return;
   let total = 0;
+  const itemCount = itemsBody.querySelectorAll("tr").length;
+  const itemCountLabel = document.getElementById("item-type-count");
+  if (itemCountLabel) itemCountLabel.textContent = `${toMyanmarDigits(itemCount)} မျိုး`;
   itemsBody.querySelectorAll("tr").forEach((row) => {
     const quantity = Number(row.querySelector(".item-quantity").value) || 0;
     const unitPrice = Number(row.querySelector(".item-price").value) || 0;
@@ -134,26 +189,16 @@ function updateFormTotal() {
 }
 
 function showMessage(text) {
+  if (!message) return;
   message.textContent = text;
   window.clearTimeout(messageTimer);
   messageTimer = window.setTimeout(() => { message.textContent = ""; }, 3500);
 }
 
 function showPage(pageName) {
-  const isDashboard = pageName === "dashboard";
-  const isHistory = pageName === "history";
-  document.getElementById("dashboard-page").hidden = !isDashboard;
-  document.getElementById("detail-page").hidden = isDashboard || isHistory;
-  document.getElementById("history-page").hidden = !isHistory;
-  document.querySelectorAll("[data-page-link]").forEach((link) => {
-    const active = link.dataset.pageLink === pageName;
-    link.classList.toggle("is-active", active);
-    if (active) link.setAttribute("aria-current", "page");
-    else link.removeAttribute("aria-current");
-  });
-  if (isDashboard) renderDashboard();
+  if (pageName === "dashboard") renderDashboard();
   else if (pageName === "detail") renderDetail();
-  else renderHistory();
+  else if (pageName === "history") renderHistory();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -168,7 +213,9 @@ function renderDashboard() {
   const total = incoming.reduce((sum, delivery) => sum + recordTotal(delivery), 0);
   const paid = incoming.reduce((sum, delivery) => sum + Math.min(recordTotal(delivery), delivery.paidAmount), 0);
   const outgoingTotal = outgoing.reduce((sum, delivery) => sum + recordTotal(delivery), 0);
-  const recent = sortedDeliveries(deliveries).slice(0, 5);
+  const dashboardDate = document.getElementById("dashboard-filter-date");
+  const dateValue = dashboardDate ? dashboardDate.value : "";
+  const recent = sortedDeliveries(deliveries.filter((delivery) => !dateValue || delivery.date === dateValue)).slice(0, 100);
   document.getElementById("summary-count").textContent = String(deliveries.length);
   document.getElementById("summary-total").textContent = formatMoney(total);
   document.getElementById("summary-paid").textContent = formatMoney(outgoingTotal);
@@ -243,6 +290,7 @@ function renderStock() {
 }
 
 function renderDetail() {
+  if (!document.getElementById("detail-list") || !filterDate || !filterText) return;
   const searchDate = filterDate.value;
   const searchText = filterText.value.trim().toLocaleLowerCase();
   const shown = sortedDeliveries(deliveries.filter((delivery) => {
@@ -265,6 +313,8 @@ function renderDetail() {
 }
 
 function renderHistory() {
+  const historyList = document.getElementById("history-list");
+  if (!historyList) return;
   const searchDate = document.getElementById("history-filter-date").value;
   const searchText = document.getElementById("history-filter-text").value.trim().toLocaleLowerCase();
   const shown = sortedDeliveries(deliveries.filter((delivery) => {
@@ -337,7 +387,7 @@ function createDeliveryCard(delivery) {
     : `ပစ္စည်းအဝင် · ကား - ${delivery.truck}`;
   const people = document.createElement("p");
   const partnerLabel = delivery.movementType === "outgoing" ? "လက်ခံသူ" : "ပို့သူ";
-  people.textContent = `${partnerLabel} - ${delivery.supplier || "မမှတ်တမ်းတင်ထား"} · စာရင်းပြုစုသူ - ${delivery.preparedBy || "မမှတ်တမ်းတင်ထား"}`;
+  people.textContent = `${partnerLabel} - ${delivery.supplier || "မမှတ်တမ်းတင်ထား"} · စာရင်းပြုစုသူ - ${delivery.preparedBy || "မမှတ်တမ်းတင်ထား"} · ပစ္စည်း ${toMyanmarDigits(delivery.items.length)} မျိုး`;
   const recordedAt = document.createElement("p");
   recordedAt.className = "recorded-at";
   recordedAt.textContent = `မှတ်တမ်းချိန် - ${formatCreatedAt(delivery)}`;
@@ -438,6 +488,7 @@ function resetForm() {
 }
 
 function syncMovementFields() {
+  if (!document.getElementById("movement-type")) return;
   const isIncoming = document.getElementById("movement-type").value === "incoming";
   const truckField = document.getElementById("truck-field");
   const paidField = document.getElementById("paid-field");
@@ -491,9 +542,8 @@ function deleteDelivery(id) {
 }
 
 function renderAll() {
-  renderDashboard();
-  renderDetail();
-  renderHistory();
+  const pageName = document.body.dataset.page;
+  showPage(pageName);
 }
 
 function csvCell(value) {
@@ -533,8 +583,8 @@ async function importJson(file) {
 }
 
 function exportCsv() {
-  const filter = filterDate.value;
-  const searchText = filterText.value.trim().toLocaleLowerCase();
+  const filter = filterDate ? filterDate.value : "";
+  const searchText = filterText ? filterText.value.trim().toLocaleLowerCase() : "";
   const records = sortedDeliveries(deliveries.filter((delivery) => {
     if (filter && delivery.date !== filter) return false;
     if (!searchText) return true;
@@ -580,7 +630,7 @@ function exportCsv() {
   showMessage("Excel တွင်ဖွင့်နိုင်သော CSV ဖိုင်ကို ထုတ်ပြီးပါပြီ။");
 }
 
-form.addEventListener("submit", (event) => {
+if (form) form.addEventListener("submit", (event) => {
   event.preventDefault();
   if (!form.reportValidity()) return;
   const items = getFormItems();
@@ -639,14 +689,15 @@ form.addEventListener("submit", (event) => {
   }
 });
 
-document.getElementById("add-item-button").addEventListener("click", () => {
+const addItemButton = document.getElementById("add-item-button");
+if (addItemButton) addItemButton.addEventListener("click", () => {
   createItemRow();
   updateFormTotal();
   itemsBody.lastElementChild.querySelector(".item-name").focus();
 });
 
-itemsBody.addEventListener("input", updateFormTotal);
-itemsBody.addEventListener("click", (event) => {
+if (itemsBody) itemsBody.addEventListener("input", updateFormTotal);
+if (itemsBody) itemsBody.addEventListener("click", (event) => {
   const button = event.target.closest(".remove-item");
   if (!button) return;
   if (itemsBody.children.length === 1) {
@@ -657,56 +708,71 @@ itemsBody.addEventListener("click", (event) => {
   updateFormTotal();
 });
 
-paidAmountInput.addEventListener("input", updateFormTotal);
-paidAmountInput.addEventListener("focus", () => paidAmountInput.select());
-document.getElementById("movement-type").addEventListener("change", syncMovementFields);
-filterDate.addEventListener("input", renderDetail);
-filterText.addEventListener("input", renderDetail);
-document.getElementById("clear-filter").addEventListener("click", () => {
+if (paidAmountInput) paidAmountInput.addEventListener("input", updateFormTotal);
+if (paidAmountInput) paidAmountInput.addEventListener("focus", () => paidAmountInput.select());
+const movementTypeInput = document.getElementById("movement-type");
+if (movementTypeInput) movementTypeInput.addEventListener("change", syncMovementFields);
+if (filterDate) filterDate.addEventListener("input", renderDetail);
+if (filterText) filterText.addEventListener("input", renderDetail);
+const clearDetailFilter = document.getElementById("clear-filter");
+if (clearDetailFilter) clearDetailFilter.addEventListener("click", () => {
   filterDate.value = "";
   filterText.value = "";
   renderDetail();
 });
-document.getElementById("history-filter-date").addEventListener("input", renderHistory);
-document.getElementById("history-filter-text").addEventListener("input", renderHistory);
-document.getElementById("history-clear-filter").addEventListener("click", () => {
+const historyFilterDate = document.getElementById("history-filter-date");
+const historyFilterText = document.getElementById("history-filter-text");
+if (historyFilterDate) historyFilterDate.addEventListener("input", renderHistory);
+if (historyFilterText) historyFilterText.addEventListener("input", renderHistory);
+const clearHistoryFilter = document.getElementById("history-clear-filter");
+if (clearHistoryFilter) clearHistoryFilter.addEventListener("click", () => {
   document.getElementById("history-filter-date").value = "";
   document.getElementById("history-filter-text").value = "";
   renderHistory();
 });
-document.getElementById("export-json-button").addEventListener("click", exportJson);
-document.getElementById("import-json-button").addEventListener("click", () => {
+const exportJsonButton = document.getElementById("export-json-button");
+if (exportJsonButton) exportJsonButton.addEventListener("click", exportJson);
+const importJsonButton = document.getElementById("import-json-button");
+if (importJsonButton) importJsonButton.addEventListener("click", () => {
   document.getElementById("import-json-input").click();
 });
-document.getElementById("import-json-input").addEventListener("change", (event) => {
+const importJsonInput = document.getElementById("import-json-input");
+if (importJsonInput) importJsonInput.addEventListener("change", (event) => {
   importJson(event.target.files[0]);
   event.target.value = "";
 });
-document.getElementById("cancel-edit").addEventListener("click", () => {
+const cancelEditButton = document.getElementById("cancel-edit");
+if (cancelEditButton) cancelEditButton.addEventListener("click", () => {
   resetForm();
   showMessage("ပြင်ဆင်မှုကို ပယ်ဖျက်လိုက်ပါပြီ။");
 });
-document.getElementById("export-button").addEventListener("click", exportCsv);
-document.querySelectorAll("[data-page-link]").forEach((link) => {
-  link.addEventListener("click", (event) => {
-    event.preventDefault();
-    const pageName = link.dataset.pageLink;
-    window.history.replaceState(null, "", `#${pageName}`);
-    showPage(pageName);
-  });
+const exportButton = document.getElementById("export-button");
+if (exportButton) exportButton.addEventListener("click", exportCsv);
+const logoutButton = document.getElementById("logout-button");
+if (logoutButton) logoutButton.addEventListener("click", () => {
+  localStorage.removeItem("daily-audit-session-v1");
+  window.location.replace("login.html");
 });
-document.querySelectorAll("[data-open-detail]").forEach((button) => {
-  button.addEventListener("click", () => {
-    window.history.replaceState(null, "", "#detail");
-    showPage("detail");
-    deliveryDate.focus();
-  });
+const dashboardFilterDate = document.getElementById("dashboard-filter-date");
+if (dashboardFilterDate) dashboardFilterDate.addEventListener("input", renderDashboard);
+const dashboardClearDate = document.getElementById("dashboard-clear-date");
+if (dashboardClearDate) dashboardClearDate.addEventListener("click", () => {
+  dashboardFilterDate.value = "";
+  renderDashboard();
 });
-window.addEventListener("hashchange", () => {
-  const pageName = ["detail", "history"].includes(window.location.hash.slice(1))
-    ? window.location.hash.slice(1)
-    : "dashboard";
-  showPage(pageName);
+
+const sidebarToggle = document.getElementById("sidebar-toggle");
+const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+function setSidebarOpen(open) {
+  document.body.classList.toggle("sidebar-open", open);
+  if (sidebarToggle) sidebarToggle.setAttribute("aria-expanded", String(open));
+}
+if (sidebarToggle) sidebarToggle.addEventListener("click", () => {
+  setSidebarOpen(!document.body.classList.contains("sidebar-open"));
+});
+if (sidebarBackdrop) sidebarBackdrop.addEventListener("click", () => setSidebarOpen(false));
+document.querySelectorAll(".main-nav .nav-link").forEach((link) => {
+  link.addEventListener("click", () => setSidebarOpen(false));
 });
 
 window.addEventListener("storage", (event) => {
@@ -718,11 +784,12 @@ window.addEventListener("storage", (event) => {
   renderAll();
 });
 
-deliveryDate.value = localDateString(new Date());
-createItemRow();
-updateFormTotal();
-const initialPage = ["detail", "history"].includes(window.location.hash.slice(1))
-  ? window.location.hash.slice(1)
-  : "dashboard";
+if (deliveryDate) deliveryDate.value = localDateString(new Date());
+if (itemsBody) {
+  createItemRow();
+  updateFormTotal();
+  if (document.getElementById("movement-type")) syncMovementFields();
+}
 requestPersistentStorage();
-showPage(initialPage);
+showPage(document.body.dataset.page || "dashboard");
+loadDeliveriesFromDatabase();

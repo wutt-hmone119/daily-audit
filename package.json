@@ -1,0 +1,26 @@
+{
+  "name": "daily-audit-(ma-gyi)",
+  "version": "1.0.0",
+  "description": "Dashboard နှင့် နေ့စဉ်စာအုပ်/Detail စာမျက်နှာနှစ်ခုပါသော ပစ္စည်းအဝင်/အထွက်စာရင်း app ဖြစ်သည်။ ရက်စွဲ၊ ကား၊ ပို့သူ/လက်ခံသူ၊ စာရင်းပြုစုသူ၊ မှတ်တမ်းတင်သည့်အချိန်၊ ပစ္စည်းအရေအတွက်/တန်ဖိုးနှင့် ငွေပေးချေမှုကို မှတ်တမ်းတင်ပေးသည်။",
+  "main": "app.js",
+  "scripts": {
+    "test": "node --check app.js && node --check auth.js && node --check server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wutt-hmone119/daily-audit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/wutt-hmone119/daily-audit/issues"
+  },
+  "homepage": "https://github.com/wutt-hmone119/daily-audit#readme",
+  "dependencies": {
+    "dotenv": "^18.0.10",
+    "mysql2": "^3.24.6"
+  }
+}

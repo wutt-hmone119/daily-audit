@@ -18,6 +18,27 @@ Dashboard နှင့် နေ့စဉ်စာအုပ်/Detail စာမ�
 
 ဖိုင်များကို တစ်ဖိုလ်ဒါတည်းတွင်ထားပါ။
 
-- `index.html` — Dashboard နှင့် နေ့စဉ်စာအုပ်/Detail စာမျက်နှာများ
-- `styles.css` — အပြင်အဆင်
-- `app.js` — အဝင်/အထွက်လက်ကျန်၊ ငွေတွက်ချက်မှု၊ browser storage နှင့် CSV export
+- `index.html` — `Dashboard.html` သို့ အလိုအလျောက်ပြောင်းပေးသော စာမျက်နှာ
+- `Dashboard.html` / `Dashboard.css` — Dashboard
+- `Aduit.html` / `Aduit.css` — နေ့စဉ်စာအုပ် / Detail
+- `History.html` / `History.css` — JSON မှတ်တမ်း History
+- `app.js` — အဝင်/အထွက်လက်ကျန်၊ ငွေတွက်ချက်မှု၊ browser storage၊ CSV/JSON export
+- `login.html` / `login.css` — Gmail နှင့် password ဖြင့် login
+- `change.html` / `change.css` — Password ပြောင်းရန်
+- `auth.js` — အကောင့်နှင့် session စီမံခြင်း
+- `start-app.bat` — Offline PWA ကို Node localhost server ဖြင့်စတင်ရန်
+- Password အတွက် မျက်လုံး icon ကိုနှိပ်၍ ပြ/ဝှက်နိုင်သည်
+
+## MySQL သိမ်းဆည်းမှု
+
+- `server.js` မှ Daily Audit records နှင့် account password ကို MySQL သို့သိမ်းသည်။
+- Database/table စနစ်ကို `schema.sql` ဖြင့်ဖန်တီးသည်။
+- ချိတ်ဆက်အချက်အလက်များကို `.env` တွင်ထားသည်။
+- `deleted_at` မရှိသေးသော စာရင်းများကိုသာ UI တွင်ပြသသည်။ User ဖျက်လိုက်သည့် data ကို database ပေါ်တွင် `deleted_at` နှင့် `deletion_reason` ဖြင့်သိမ်းထားသည်။
+- စတင်ရန် `npm start` သို့မဟုတ် `start-app.bat` ကိုအသုံးပြုပါ။
+
+## Gmail အကောင့်များ
+
+- Gmail အသစ်ဖြင့် ပထမဆုံးဝင်သည့်အခါ password `123456` သုံးပါက account အသစ်ကို အလိုအလျောက်ဖန်တီးသည်။
+- Gmail တစ်ခုစီတွင် password သီးခြားပြောင်းနိုင်သည်။
+- Password reset ပြုလုပ်ပါက account အတွက် password ကို `123456` သို့ပြန်ထားသည်။

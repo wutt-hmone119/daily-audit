@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="my">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1d4ed8">
+  <title>Daily Audit - Login</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="login.css">
+</head>
+<body data-auth-page="login">
+  <main class="auth-shell">
+    <section class="auth-card" aria-labelledby="login-title">
+      <div class="brand-mark">DA</div>
+      <p class="eyebrow">Daily Audit</p>
+      <h1 id="login-title">အကောင့်ဝင်ရန်</h1>
+      <p class="subtitle">Gmail နှင့် password ဖြင့် Daily Audit ကို ဝင်ရောက်ပါ။ Gmail အသစ်ဖြင့် `123456` ဖြင့်အကောင့်ပထမဆုံးဖွင့်နိုင်ပါသည်။</p>
+      <form id="login-form">
+        <label class="field">
+          <span>Gmail address</span>
+          <input id="email" type="email" inputmode="email" autocomplete="username" placeholder="name@gmail.com" required>
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <span class="password-control">
+            <input id="password" type="password" autocomplete="current-password" placeholder="Password" required>
+            <button class="password-toggle" type="button" data-password-toggle="password" aria-label="Password ကြည့်ရန်" aria-pressed="false">👁</button>
+          </span>
+        </label>
+        <p id="login-message" class="auth-message" role="alert"></p>
+        <button class="auth-button" type="submit">ဝင်ရောက်မည်</button>
+      </form>
+      <button id="reset-password-button" class="reset-link" type="button">Password မေ့နေပါသလား။ Reset Password</button>
+      <p class="default-note">Default password: <strong>123456</strong></p>
+      <button id="install-button" class="install-button" type="button" hidden>Mobile App အဖြစ်ထည့်သွင်းရန်</button>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+</body>
+</html>
