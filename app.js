@@ -46,7 +46,12 @@ function normalizeDelivery(delivery) {
     if (!item.name || !Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(unitPrice) || unitPrice < 0) {
       throw new Error("Stored delivery data contains an invalid item.");
     }
-    return { name: String(item.name), quantity, unitPrice };
+    return {
+      name: String(item.name),
+      category: String(item.category || "အထွေထွေ"),
+      quantity,
+      unitPrice
+    };
   });
   const total = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
   const paidAmount = Number.isFinite(Number(delivery.paidAmount))
@@ -152,11 +157,13 @@ function createItemRow(item = {}) {
   const row = document.createElement("tr");
   row.innerHTML = `
     <td><input class="item-input item-name" type="text" maxlength="100" placeholder="ဥပမာ - ဆန်" aria-label="ပစ္စည်းအမည်" required></td>
+    <td><input class="item-input item-category" type="text" maxlength="80" placeholder="ဥပမာ - စားသောက်ကုန်" aria-label="ပစ္စည်း category" required></td>
     <td><input class="item-input numeric item-quantity" type="number" inputmode="decimal" enterkeyhint="next" min="0.01" step="any" value="${item.quantity ?? 1}" placeholder="1" aria-label="အရေအတွက်" required></td>
     <td><input class="item-input numeric item-price" type="number" inputmode="decimal" enterkeyhint="next" min="0" step="any" value="${item.unitPrice ?? ""}" placeholder="0" aria-label="တစ်ခုတန်ဖိုး" required></td>
     <td><span class="line-total">0</span></td>
     <td><button class="icon-button remove-item" type="button" aria-label="ဤပစ္စည်းကို ဖယ်ရှားရန်">×</button></td>`;
   row.querySelector(".item-name").value = item.name || "";
+  row.querySelector(".item-category").value = item.category || "";
   itemsBody.append(row);
   return row;
 }
@@ -164,6 +171,7 @@ function createItemRow(item = {}) {
 function getFormItems() {
   return [...itemsBody.querySelectorAll("tr")].map((row) => ({
     name: row.querySelector(".item-name").value.trim(),
+    category: row.querySelector(".item-category").value.trim(),
     quantity: Number(row.querySelector(".item-quantity").value),
     unitPrice: Number(row.querySelector(".item-price").value)
   }));
@@ -172,6 +180,7 @@ function getFormItems() {
 function updateFormTotal() {
   if (!itemsBody || !paidAmountInput) return;
   let total = 0;
+  const categoryTotals = new Map();
   const itemCount = itemsBody.querySelectorAll("tr").length;
   const itemCountLabel = document.getElementById("item-type-count");
   if (itemCountLabel) itemCountLabel.textContent = `${toMyanmarDigits(itemCount)} မျိုး`;
@@ -181,11 +190,27 @@ function updateFormTotal() {
     const lineTotal = quantity * unitPrice;
     total += lineTotal;
     row.querySelector(".line-total").textContent = formatMoney(lineTotal);
+    const category = row.querySelector(".item-category").value.trim();
+    if (category) categoryTotals.set(category, (categoryTotals.get(category) || 0) + lineTotal);
   });
   const paid = Number(paidAmountInput.value) || 0;
   document.getElementById("form-total").textContent = formatMoney(total);
   document.getElementById("form-due").textContent = formatMoney(Math.max(0, total - paid));
   paidAmountInput.max = String(total);
+  const categoryTotalsElement = document.getElementById("category-totals");
+  if (categoryTotalsElement) {
+    categoryTotalsElement.replaceChildren();
+    if (categoryTotals.size > 0) {
+      const heading = document.createElement("strong");
+      heading.textContent = "Category အလိုက် တန်ဖိုး";
+      categoryTotalsElement.append(heading);
+      categoryTotals.forEach((amount, category) => {
+        const row = document.createElement("span");
+        row.textContent = `${category} - ${formatMoney(amount)} ကျပ်`;
+        categoryTotalsElement.append(row);
+      });
+    }
+  }
 }
 
 function showMessage(text) {
@@ -298,6 +323,7 @@ function renderDetail() {
     if (!searchText) return true;
     const itemMatch = delivery.items.some((item) =>
       item.name.toLocaleLowerCase().includes(searchText)
+      || item.category.toLocaleLowerCase().includes(searchText)
     );
     const partnerMatch = delivery.supplier.toLocaleLowerCase().includes(searchText);
     return itemMatch || partnerMatch;
@@ -320,7 +346,10 @@ function renderHistory() {
   const shown = sortedDeliveries(deliveries.filter((delivery) => {
     if (searchDate && delivery.date !== searchDate) return false;
     if (!searchText) return true;
-    const itemMatch = delivery.items.some((item) => item.name.toLocaleLowerCase().includes(searchText));
+    const itemMatch = delivery.items.some((item) =>
+      item.name.toLocaleLowerCase().includes(searchText)
+      || item.category.toLocaleLowerCase().includes(searchText)
+    );
     const partnerMatch = delivery.supplier.toLocaleLowerCase().includes(searchText);
     const preparedByMatch = delivery.preparedBy.toLocaleLowerCase().includes(searchText);
     return itemMatch || partnerMatch || preparedByMatch;
@@ -409,17 +438,25 @@ function createDeliveryCard(delivery) {
 
   const itemList = document.createElement("div");
   itemList.className = "delivery-items";
+  const categoryTotals = new Map();
   delivery.items.forEach((item) => {
     const row = document.createElement("div");
     row.className = "delivery-item";
     const name = document.createElement("span");
-    name.textContent = item.name;
+    name.textContent = `${item.category} · ${item.name}`;
     const quantity = document.createElement("span");
     quantity.textContent = `${formatMoney(item.quantity)} × ${formatMoney(item.unitPrice)}`;
     const lineTotal = document.createElement("strong");
     lineTotal.textContent = `${formatMoney(item.quantity * item.unitPrice)} ကျပ်`;
     row.append(name, quantity, lineTotal);
     itemList.append(row);
+    categoryTotals.set(item.category, (categoryTotals.get(item.category) || 0) + item.quantity * item.unitPrice);
+  });
+  categoryTotals.forEach((amount, category) => {
+    const subtotal = document.createElement("div");
+    subtotal.className = "delivery-category-total";
+    subtotal.textContent = `${category} စုစုပေါင်း - ${formatMoney(amount)} ကျပ်`;
+    itemList.append(subtotal);
   });
   card.append(itemList);
 
@@ -589,7 +626,10 @@ function exportCsv() {
     if (filter && delivery.date !== filter) return false;
     if (!searchText) return true;
     return delivery.supplier.toLocaleLowerCase().includes(searchText)
-      || delivery.items.some((item) => item.name.toLocaleLowerCase().includes(searchText));
+      || delivery.items.some((item) =>
+        item.name.toLocaleLowerCase().includes(searchText)
+        || item.category.toLocaleLowerCase().includes(searchText)
+      );
   }));
   if (records.length === 0) {
     showMessage(filter ? "ရွေးထားသောရက်အတွက် စာရင်းမရှိပါ။" : "Excel ထုတ်ရန် စာရင်းမရှိသေးပါ။");
@@ -597,7 +637,7 @@ function exportCsv() {
   }
   const headers = [
     "ရက်စွဲ", "အဝင် / အထွက်", "ကားနံပါတ် / ကားအမည်", "ပို့သူ / လက်ခံသူ", "စာရင်းပြုစုသူ", "စာရင်းပြုစုသည့်အချိန်",
-    "ငွေပေးချေမှု", "ပေးချေပြီးငွေ (ကျပ်)", "ပေးရန်ကျန် (ကျပ်)", "ပစ္စည်းအမည်", "အရေအတွက်",
+    "ငွေပေးချေမှု", "ပေးချေပြီးငွေ (ကျပ်)", "ပေးရန်ကျန် (ကျပ်)", "ပစ္စည်းအမည်", "Category", "အရေအတွက်",
     "တစ်ခုတန်ဖိုး (ကျပ်)", "ပစ္စည်းစုစုပေါင်း (ကျပ်)"
   ];
   const rows = [headers];
@@ -612,7 +652,7 @@ function exportCsv() {
       rows.push([
         delivery.date, delivery.movementType === "outgoing" ? "အထွက်" : "အဝင်",
         delivery.truck, delivery.supplier, delivery.preparedBy, formatCsvCreatedAt(delivery),
-        status, paid, due, item.name, item.quantity, item.unitPrice, item.quantity * item.unitPrice
+        status, paid, due, item.name, item.category, item.quantity, item.unitPrice, item.quantity * item.unitPrice
       ]);
     });
   });
@@ -634,8 +674,8 @@ if (form) form.addEventListener("submit", (event) => {
   event.preventDefault();
   if (!form.reportValidity()) return;
   const items = getFormItems();
-  if (items.length === 0 || items.some((item) => !item.name || !Number.isFinite(item.quantity) || item.quantity <= 0 || !Number.isFinite(item.unitPrice) || item.unitPrice < 0)) {
-    showMessage("ပစ္စည်းအမည်၊ အရေအတွက်နှင့် တန်ဖိုးတို့ကို မှန်ကန်စွာဖြည့်ပါ။");
+  if (items.length === 0 || items.some((item) => !item.name || !item.category || !Number.isFinite(item.quantity) || item.quantity <= 0 || !Number.isFinite(item.unitPrice) || item.unitPrice < 0)) {
+    showMessage("ပစ္စည်းအမည်၊ Category၊ အရေအတွက်နှင့် တန်ဖိုးတို့ကို မှန်ကန်စွာဖြည့်ပါ။");
     return;
   }
   const total = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);

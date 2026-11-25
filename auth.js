@@ -72,7 +72,11 @@ if (document.body.dataset.authPage) {
       } catch {
         const account = getAccount();
         if (!account.email) {
-          saveAccount({ email: email.toLowerCase(), password: "123456" });
+          if (password !== account.password) {
+            message.textContent = "Server မချိတ်ဆက်နိုင်ပါ။ ပထမဆုံးဝင်ရောက်ပါက default Password 123456 ကိုသုံးပါ။";
+            return;
+          }
+          saveAccount({ email: email.toLowerCase(), password: account.password });
         }
         const localAccount = getAccount();
         if (email.toLowerCase() === localAccount.email.toLowerCase()
@@ -129,14 +133,25 @@ if (document.body.dataset.authPage) {
       const newPassword = document.getElementById("new-password").value;
       const confirmPassword = document.getElementById("confirm-password").value;
       const message = document.getElementById("change-message");
-      if (newPassword.length < 6) {
-        message.textContent = "Password အသစ်သည် အနည်းဆုံး ၆ လုံး ဖြစ်ရပါမည်။";
+      const submitButton = changeForm.querySelector('button[type="submit"]');
+      const showMessage = (text, success = false) => {
+        message.className = success ? "auth-message success" : "auth-message";
+        message.textContent = text;
+      };
+      if (newPassword.length !== 6) {
+        showMessage("Password အသစ်သည် ၆ လုံးတိတိ ဖြစ်ရပါမည်။");
         return;
       }
       if (newPassword !== confirmPassword) {
-        message.textContent = "Password အသစ်နှစ်ခုပြန်ဖြည့်ချက် မတူပါ။";
+        showMessage("Password အသစ်နှစ်ခုပြန်ဖြည့်ချက် မတူပါ။");
         return;
       }
+      if (newPassword === currentPassword) {
+        showMessage("Password အသစ်ကို လက်ရှိ Password နှင့် မတူအောင် ရွေးပါ။");
+        return;
+      }
+      submitButton.disabled = true;
+      submitButton.textContent = "ပြောင်းလဲနေသည်...";
       try {
         const response = await fetch("/api/account/change", {
           method: "POST",
@@ -149,15 +164,33 @@ if (document.body.dataset.authPage) {
         });
         const result = await response.json();
         if (!response.ok) {
-          message.textContent = result.error || "Password ပြောင်းမရပါ။";
+          showMessage(result.error || "Password ပြောင်းမရပါ။");
           return;
         }
         saveAccount({ email: account.email, password: newPassword });
-        message.className = "auth-message success";
-        message.textContent = "Password ပြောင်းပြီးပါပြီ။";
+        showMessage("Password ပြောင်းပြီးပါပြီ။", true);
         changeForm.reset();
-      } catch {
-        message.textContent = "Database server သို့မချိတ်ဆက်နိုင်ပါ။";
+        logout();
+      } catch (error) {
+        if (error instanceof TypeError || error instanceof SyntaxError) {
+          const localAccount = getAccount();
+          const localEmailMatches = !localAccount.email || !account.email
+            || localAccount.email.toLowerCase() === String(account.email).toLowerCase();
+          if (localEmailMatches && currentPassword === localAccount.password) {
+            saveAccount({ email: localAccount.email || account.email, password: newPassword });
+            showMessage("Password ကို ဒီ browser မှာသာ ပြောင်းပြီးပါပြီ။ Server နှင့် အခြားစက်များတွင် မပြောင်းသေးပါ။", true);
+            changeForm.reset();
+            logout();
+          } else {
+            showMessage("Server ကို မချိတ်ဆက်နိုင်ပါ။ Browser ထဲရှိ လက်ရှိ Password ကို စစ်ဆေးပါ။");
+          }
+          return;
+        }
+        console.error("Could not change password with the server.", error);
+        showMessage("Server မှ ပြန်လာသောအဖြေကို ဖတ်မရပါ။ ထပ်မံကြိုးစားပါ။");
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Password ပြောင်းမည်";
       }
     });
   }

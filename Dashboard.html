@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="my">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,52 +11,114 @@
   <script src="auth.js" defer></script>
   <script src="app.js" defer></script>
 </head>
+
 <body data-page="dashboard">
   <header class="topbar">
-    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Menu ဖွင့်ရန်" aria-controls="main-nav" aria-expanded="false">☰</button>
+    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Menu ဖွင့်ရန်" aria-controls="main-nav"
+      aria-expanded="false">☰</button>
     <a class="brand" href="Dashboard.html" aria-label="Daily Audit Dashboard">
       <span class="brand-mark" aria-hidden="true">DA</span>
-      <span><span class="eyebrow brand-caption">နေ့စဉ်ပစ္စည်းစာရင်း</span><span class="brand-title">Daily Audit</span></span>
+      <span><span class="eyebrow brand-caption">နေ့စဉ်ပစ္စည်းစာရင်း</span><span class="brand-title">Daily
+          Audit</span></span>
     </a>
     <div class="top-actions">
-      <button class="button button-outline" id="export-button" type="button">Excel အတွက် CSV ထုတ်ရန်</button>
-      <a class="button button-light account-link" href="change.html">Password ပြောင်းရန်</a>
+      <button class="button button-outline" id="export-button" type="button">File</button>
+      <a class="button button-light account-link" href="change.html">Change Password</a>
       <button class="button button-light" id="logout-button" type="button">Logout</button>
     </div>
   </header>
   <nav class="main-nav" id="main-nav" aria-label="အဓိကစာမျက်နှာများ">
     <div class="nav-inner">
       <a class="nav-link is-active" href="Dashboard.html" aria-current="page">Dashboard</a>
-      <a class="nav-link" href="Aduit.html">နေ့စဉ်စာအုပ် / Detail</a>
+      <a class="nav-link" href="Aduit.html">Detail Aduit</a>
       <a class="nav-link" href="History.html">History</a>
-      <a class="nav-link" href="change.html">Password ပြောင်းရန်</a>
+      <a class="nav-link" href="change.html">ChangePassword</a>
     </div>
   </nav>
   <button class="sidebar-backdrop" id="sidebar-backdrop" type="button" aria-label="Menu ပိတ်ရန်"></button>
   <main class="page">
     <section id="dashboard-page" class="page-view">
-      <div class="intro">
-        <div><p class="eyebrow">အကျဉ်းချုပ်</p><h1>Dashboard</h1><p>နေ့စဉ်ပစ္စည်းအဝင်၊ အထွက်၊ လက်ကျန်နှင့် ပေးရန်ကျန်ငွေကို ကြည့်ရှုပါ။</p></div>
-        <button class="button button-primary" type="button" onclick="location.href='Aduit.html'">＋ နေ့စဉ်စာရင်းသွင်းရန်</button>
+      <div class="intro dashboard-hero">
+        <div class="dashboard-hero-copy">
+          <p class="eyebrow dashboard-hero-eyebrow"><span aria-hidden="true"></span> နေ့စဉ်လုပ်ငန်း အကျဉ်းချုပ်</p>
+          <h1>Dashboard</h1>
+          <p>ပစ္စည်းအဝင်၊ အထွက်၊ လက်ကျန်နဲ့ ငွေစာရင်းအားလုံးကို တစ်နေရာတည်းမှာ ကြည့်ရှုစီမံပါ။</p>
+          <button class="button dashboard-hero-button" type="button" onclick="location.href='Aduit.html'">
+            <span aria-hidden="true">＋</span> နေ့စဉ်စာရင်းသွင်းရန်
+          </button>
+        </div>
+        <div class="dashboard-hero-art" aria-hidden="true">
+          <div class="hero-art-orbit"></div>
+          <div class="hero-art-card">
+            <span class="hero-art-caption">STOCK OVERVIEW</span>
+            <div class="hero-art-chart">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="hero-art-footer"><span></span> စာရင်းကို အချိန်နှင့်တစ်ပြေးညီ ကြည့်ရှုပါ</div>
+          </div>
+          <span class="hero-art-spark hero-art-spark-one"></span>
+          <span class="hero-art-spark hero-art-spark-two"></span>
+        </div>
       </div>
       <section class="summary-grid" aria-label="စာရင်းအကျဉ်း">
-        <article class="summary-card"><span class="summary-label">စာရင်းစုစုပေါင်း</span><strong id="summary-count">0</strong><span class="summary-foot">မှတ်တမ်း</span></article>
-        <article class="summary-card"><span class="summary-label">ပစ္စည်းအဝင်တန်ဖိုး</span><strong id="summary-total">0</strong><span class="summary-foot">ကျပ်</span></article>
-        <article class="summary-card"><span class="summary-label">ပစ္စည်းအထွက်တန်ဖိုး</span><strong id="summary-paid">0</strong><span class="summary-foot">ကျပ်</span></article>
-        <article class="summary-card summary-due"><span class="summary-label">ပေးရန်ကျန်ငွေ</span><strong id="summary-unpaid">0</strong><span class="summary-foot">ကျပ်</span></article>
+        <article class="summary-card summary-records">
+          <div class="summary-card-top"><span class="summary-label">စာရင်းစုစုပေါင်း</span><span class="summary-icon" aria-hidden="true">▤</span></div>
+          <strong id="summary-count">0</strong><span class="summary-foot">မှတ်တမ်း</span>
+        </article>
+        <article class="summary-card summary-incoming">
+          <div class="summary-card-top"><span class="summary-label">ပစ္စည်းအဝင်တန်ဖိုး</span><span class="summary-icon" aria-hidden="true">↓</span></div>
+          <strong id="summary-total">0</strong><span class="summary-foot">ကျပ်</span>
+        </article>
+        <article class="summary-card summary-outgoing">
+          <div class="summary-card-top"><span class="summary-label">ပစ္စည်းအထွက်တန်ဖိုး</span><span class="summary-icon" aria-hidden="true">↑</span></div>
+          <strong id="summary-paid">0</strong><span class="summary-foot">ကျပ်</span>
+        </article>
+        <article class="summary-card summary-due">
+          <div class="summary-card-top"><span class="summary-label">ပေးရန်ကျန်ငွေ</span><span class="summary-icon" aria-hidden="true">◎</span></div>
+          <strong id="summary-unpaid">0</strong><span class="summary-foot">ကျပ်</span>
+        </article>
       </section>
       <section class="panel stock-panel">
-        <div class="section-heading"><div><p class="eyebrow">လက်ကျန်စာရင်း</p><h2>ပစ္စည်းအဝင် / အထွက် လက်ကျန်</h2></div></div>
-        <div id="stock-empty" class="empty-state"><strong>ပစ္စည်းလက်ကျန် မရှိသေးပါ</strong><span>အဝင်စာရင်းသွင်းပြီးနောက် ပစ္စည်းအလိုက် လက်ကျန်ကို တွက်ပြပါမည်။</span></div>
-        <div class="item-table-wrap"><table class="stock-table"><thead><tr><th scope="col">ပစ္စည်းအမည်</th><th scope="col">အဝင်စုစုပေါင်း</th><th scope="col">အထွက်စုစုပေါင်း</th><th scope="col">လက်ကျန်</th></tr></thead><tbody id="stock-body"></tbody></table></div>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">လက်ကျန်စာရင်း</p>
+            <h2>ပစ္စည်းအဝင် / အထွက် လက်ကျန်</h2>
+          </div>
+        </div>
+        <div id="stock-empty" class="empty-state"><strong>ပစ္စည်းလက်ကျန်
+            မရှိသေးပါ</strong><span>အဝင်စာရင်းသွင်းပြီးနောက် ပစ္စည်းအလိုက် လက်ကျန်ကို တွက်ပြပါမည်။</span></div>
+        <div class="item-table-wrap">
+          <table class="stock-table">
+            <thead>
+              <tr>
+                <th scope="col">ပစ္စည်းအမည်</th>
+                <th scope="col">အဝင်စုစုပေါင်း</th>
+                <th scope="col">အထွက်စုစုပေါင်း</th>
+                <th scope="col">လက်ကျန်</th>
+              </tr>
+            </thead>
+            <tbody id="stock-body"></tbody>
+          </table>
+        </div>
       </section>
       <section class="panel dashboard-panel">
-        <div class="section-heading"><div><p class="eyebrow">နေ့အလိုက် ရှာဖွေရန်</p><h2>နေ့စဉ်စာအုပ်</h2></div><div class="dashboard-date-tools"><label class="field"><span>ရက်စွဲရွေးရန်</span><input id="dashboard-filter-date" type="date"></label><button class="button button-light" id="dashboard-clear-date" type="button">အားလုံး</button></div></div>
-        <div id="dashboard-empty" class="empty-state"><span class="empty-icon" aria-hidden="true">▤</span><strong>စာရင်းမရှိသေးပါ</strong><span>နေ့စဉ်စာအုပ်မှာ စာရင်းအသစ်တစ်ခု စတင်မှတ်တမ်းတင်ပါ။</span></div>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">နေ့အလိုက် ရှာဖွေရန်</p>
+            <h2>နေ့စဉ်စာအုပ်</h2>
+          </div>
+          <div class="dashboard-date-tools"><label class="field"><span>ရက်စွဲရွေးရန်</span><input
+                id="dashboard-filter-date" type="date"></label><button class="button button-light"
+              id="dashboard-clear-date" type="button">အားလုံး</button></div>
+        </div>
+        <div id="dashboard-empty" class="empty-state"><span class="empty-icon"
+            aria-hidden="true">▤</span><strong>စာရင်းမရှိသေးပါ</strong><span>နေ့စဉ်စာအုပ်မှာ စာရင်းအသစ်တစ်ခု
+            စတင်မှတ်တမ်းတင်ပါ။</span></div>
         <div id="dashboard-list" class="deliveries-list"></div>
       </section>
     </section>
   </main>
   <footer class="footer">Daily Audit <span>·</span> သင့်စက်၏ ဘရောက်ဇာတွင်သာ သိမ်းဆည်းထားသည်</footer>
 </body>
+
 </html>

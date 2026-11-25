@@ -3,25 +3,61 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#1d4ed8">
+  <meta name="theme-color" content="#dceef5">
   <title>Daily Audit - Change Password</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="login.css">
   <link rel="stylesheet" href="change.css">
 </head>
 <body data-auth-page="change">
   <main class="auth-shell">
     <section class="auth-card" aria-labelledby="change-title">
       <a class="back-link" href="Dashboard.html">← Dashboard</a>
-      <div class="brand-mark">DA</div>
+      <div class="brand-mark change-avatar" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+          <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+        </svg>
+      </div>
       <p class="eyebrow">Daily Audit</p>
       <h1 id="change-title">Password ပြောင်းရန်</h1>
       <p class="subtitle">Password အသစ်ဖြင့် နောက်တစ်ခါဝင်ရောက်နိုင်ပါမည်။</p>
       <form id="change-form">
-        <label class="field"><span>Password လက်ရှိ</span><span class="password-control"><input id="current-password" type="password" autocomplete="current-password" required><button class="password-toggle" type="button" data-password-toggle="current-password" aria-label="Password ကြည့်ရန်" aria-pressed="false">👁</button></span></label>
-        <label class="field"><span>Password အသစ်</span><span class="password-control"><input id="new-password" type="password" minlength="6" autocomplete="new-password" required><button class="password-toggle" type="button" data-password-toggle="new-password" aria-label="Password ကြည့်ရန်" aria-pressed="false">👁</button></span></label>
-        <label class="field"><span>Password အသစ်ကို ပြန်ဖြည့်ပါ</span><span class="password-control"><input id="confirm-password" type="password" minlength="6" autocomplete="new-password" required><button class="password-toggle" type="button" data-password-toggle="confirm-password" aria-label="Password ကြည့်ရန်" aria-pressed="false">👁</button></span></label>
+        <label class="field">
+          <span>Password လက်ရှိ</span>
+          <span class="password-control change-input-control">
+            <svg class="change-field-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+              <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+            </svg>
+            <input id="current-password" type="password" autocomplete="current-password" required>
+            <button class="password-toggle" type="button" data-password-toggle="current-password" aria-label="Password ကြည့်ရန်" aria-pressed="false">👁</button>
+          </span>
+        </label>
+        <label class="field">
+          <span>Password အသစ် (၆ လုံးတိတိ)</span>
+          <span class="password-control change-input-control">
+            <svg class="change-field-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+              <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+            </svg>
+            <input id="new-password" type="password" minlength="6" maxlength="6" autocomplete="new-password" required>
+            <button class="password-toggle" type="button" data-password-toggle="new-password" aria-label="Password ကြည့်ရန်" aria-pressed="false">👁</button>
+          </span>
+        </label>
+        <label class="field">
+          <span>Password အသစ်ကို ပြန်ဖြည့်ပါ</span>
+          <span class="password-control change-input-control">
+            <svg class="change-field-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+              <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+            </svg>
+            <input id="confirm-password" type="password" minlength="6" maxlength="6" autocomplete="new-password" required>
+            <button class="password-toggle" type="button" data-password-toggle="confirm-password" aria-label="Password ကြည့်ရန်" aria-pressed="false">👁</button>
+          </span>
+        </label>
         <p id="change-message" class="auth-message" role="status"></p>
         <button class="auth-button" type="submit">Password ပြောင်းမည်</button>
       </form>

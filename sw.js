@@ -1,9 +1,11 @@
-const CACHE_NAME = "daily-audit-v4";
+const CACHE_NAME = "daily-audit-v8";
 const APP_FILES = [
   "./",
   "./index.html",
   "./login.html",
   "./login.css",
+  "./auth-background.png",
+  "./login-background.png",
   "./change.html",
   "./change.css",
   "./Dashboard.html",

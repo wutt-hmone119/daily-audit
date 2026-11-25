@@ -115,7 +115,7 @@ button { cursor: pointer; }
 .button:focus-visible, .icon-button:focus-visible { outline: 3px solid rgba(29, 78, 216, .25); outline-offset: 2px; }
 
 .item-table-wrap { overflow-x: auto; }
-.item-table { width: 100%; min-width: 640px; border-collapse: collapse; }
+.item-table { width: 100%; min-width: 780px; border-collapse: collapse; }
 .stock-table { width: 100%; border-collapse: collapse; }
 .item-table th { padding: 0 9px 10px; color: #8a96aa; font-size: 11px; font-weight: 500; text-align: left; }
 .stock-table th { padding: 0 12px 10px; color: #8a96aa; font-size: 11px; font-weight: 500; text-align: left; }
@@ -124,8 +124,9 @@ button { cursor: pointer; }
 .stock-table td:not(:first-child) { text-align: right; }
 .stock-table .stock-balance { color: var(--ink); font-weight: 700; }
 .item-table th:first-child, .item-table td:first-child { padding-left: 0; }
-.item-table th:nth-child(2) { width: 105px; }
-.item-table th:nth-child(3), .item-table th:nth-child(4) { width: 165px; }
+.item-table th:nth-child(2) { width: 150px; }
+.item-table th:nth-child(3) { width: 105px; }
+.item-table th:nth-child(4), .item-table th:nth-child(5) { width: 155px; }
 .item-input { min-height: 39px; }
 .item-input.numeric { text-align: right; font-variant-numeric: tabular-nums; }
 .item-type-count { display:inline-flex;margin-left:6px;padding:3px 8px;border-radius:20px;background:#eaf1ff;color:#1d4ed8;font-size:11px;font-weight:700 }
@@ -142,6 +143,9 @@ button { cursor: pointer; }
 .form-bottom { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 20px; padding-top: 17px; border-top: 1px solid var(--line); }
 .total-preview { margin: 0; color: #64728a; }
 .total-preview strong { margin-left: 5px; color: var(--ink); font-size: 16px; }
+.category-totals { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 14px; margin-top: 15px; color: #64728a; font-size: 12px; }
+.category-totals strong { color: #27466f; }
+.category-totals span { padding: 5px 9px; border-radius: 7px; background: #f1f5fb; color: #34425a; font-variant-numeric: tabular-nums; }
 
 .records-heading { margin-bottom: 18px; }
 .filter-tools { display: flex; align-items: flex-end; gap: 9px; }
@@ -166,6 +170,7 @@ button { cursor: pointer; }
 .delivery-item { display: grid; grid-template-columns: minmax(100px, 1fr) auto auto; gap: 15px; padding: 9px 0; border-bottom: 1px solid #f4f5f8; color: #617088; font-size: 12px; }
 .delivery-item:last-child { border-bottom: 0; }
 .delivery-item strong { color: #34425a; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.delivery-category-total { padding: 8px 0; color: #27466f; font-size: 12px; font-weight: 700; text-align: right; }
 .delivery-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 0 18px 14px; }
 .small-button { padding: 6px 10px; border: 1px solid #e3e7ef; border-radius: 7px; background: #fff; color: #52617a; font-size: 11px; font-weight: 600; }
 .small-button:hover { background: #f7f8fb; }
@@ -235,7 +240,7 @@ button { cursor: pointer; }
   .form-meta { grid-template-columns: 1fr; gap: 11px; margin-bottom: 22px; }
   .items-heading { align-items: flex-start; }
   .items-heading .button { min-height: 38px; white-space: nowrap; }
-  .item-table { min-width: 620px; }
+  .item-table { min-width: 780px; }
   .form-bottom { align-items: stretch; }
   .form-bottom .button { width: 100%; }
   .records-heading { align-items: stretch; flex-direction: column; gap: 14px; }
@@ -267,6 +272,7 @@ button { cursor: pointer; }
     touch-action: manipulation;
     pointer-events: auto;
   }
+
   .brand { min-width: 0; gap: 7px; }
   .brand > span:last-child { min-width: 0; }
   .brand-title { font-size: 15px; }
@@ -308,26 +314,48 @@ button { cursor: pointer; }
     padding: 0;
     border: 0;
   }
-  .item-table td:first-child { grid-column: 1 / -1; }
-  .item-table td:nth-child(2), .item-table td:nth-child(3) { grid-row: 2; }
-  .item-table td:nth-child(4) { grid-column: 1; grid-row: 3; align-self: center; }
-  .item-table td:nth-child(5) { grid-column: 2; grid-row: 3; justify-self: end; }
+  .item-table td:first-child, .item-table td:nth-child(2) { grid-column: 1 / -1; }
+  .item-table td:nth-child(3), .item-table td:nth-child(4) { grid-row: 3; }
+  .item-table td:nth-child(5) { grid-column: 1; grid-row: 4; align-self: center; }
+  .item-table td:nth-child(6) { grid-column: 2; grid-row: 4; justify-self: end; }
   .item-table td:first-child .item-name { width: 100%; }
-  .item-table td:nth-child(4)::before {
-    display: block;
-    margin-bottom: 4px;
-    color: var(--muted);
-    content: "စုစုပေါင်း";
-    font-size: 10px;
-  }
-  .item-table .line-total { padding: 0; text-align: left; font-weight: 700; }
   .item-table td:nth-child(2)::before,
-  .item-table td:nth-child(3)::before {
+  .item-table td:nth-child(3)::before,
+  .item-table td:nth-child(4)::before,
+  .item-table td:nth-child(5)::before {
     display: block;
     margin-bottom: 5px;
     color: var(--muted);
     font-size: 10px;
   }
-  .item-table td:nth-child(2)::before { content: "အရေအတွက်"; }
-  .item-table td:nth-child(3)::before { content: "တစ်ခုတန်ဖိုး"; }
+  .item-table td:nth-child(2)::before { content: "Category"; }
+  .item-table td:nth-child(3)::before { content: "အရေအတွက်"; }
+  .item-table td:nth-child(4)::before { content: "တစ်ခုတန်ဖိုး"; }
+  .item-table td:nth-child(5)::before { content: "စုစုပေါင်း"; }
+  .item-table .line-total { padding: 0; text-align: left; font-weight: 700; }
 }
+
+.main-nav {
+  border-color: #cfe7f3;
+  background: linear-gradient(180deg, #eaf8ff 0%, #e0f2fb 100%);
+}
+.main-nav::before {
+  border-bottom-color: #c9e6f4;
+  background: linear-gradient(110deg, #d9f1fc, #effaff);
+  color: #155b80;
+}
+.nav-link {
+  color: #46677e;
+  transition: color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+.nav-link:hover {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .72);
+  color: #087fb8;
+}
+.nav-link.is-active {
+  background: linear-gradient(110deg, #c8eaff, #dcf4ff);
+  box-shadow: inset 0 0 0 1px rgba(37, 140, 188, .17), 0 4px 12px rgba(32, 118, 160, .08);
+  color: #116e9e;
+}
+.nav-link.is-active::after { background: #1498d0; }
