@@ -638,26 +638,26 @@ function createDeliveryCard(delivery) {
   const viewButton = document.createElement("button");
   viewButton.className = "small-button";
   viewButton.type = "button";
-  viewButton.textContent = "ကြည့်ရန်";
+  viewButton.textContent = "View";
   viewButton.addEventListener("click", () => viewDelivery(delivery.id));
   actions.append(viewButton);
   if (due > 0) {
     const paidButton = document.createElement("button");
     paidButton.className = "small-button";
     paidButton.type = "button";
-    paidButton.textContent = "ကျန်ငွေအားလုံးပေးပြီးသား သတ်မှတ်ရန်";
+    paidButton.textContent = "Paid";
     paidButton.addEventListener("click", () => markPaid(delivery.id));
     actions.append(paidButton);
   }
   const editButton = document.createElement("button");
   editButton.className = "small-button";
   editButton.type = "button";
-  editButton.textContent = "ပြင်ရန်";
+  editButton.textContent = "Edit";
   editButton.addEventListener("click", () => editDelivery(delivery.id));
   const deleteButton = document.createElement("button");
   deleteButton.className = "small-button delete";
   deleteButton.type = "button";
-  deleteButton.textContent = "ဖျက်ရန်";
+  deleteButton.textContent = "Delete";
   deleteButton.addEventListener("click", () => deleteDelivery(delivery.id));
   actions.append(editButton, deleteButton);
   card.append(actions);
