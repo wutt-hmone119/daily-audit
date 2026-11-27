@@ -1,52 +1,168 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f3f6fa">
-  <title>Daily Audit - Dashboard</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="Dashboard.css">
-  <script src="offline-db.js" defer></script>
-  <script src="auth.js" defer></script>
-  <script src="app.js" defer></script>
-</head>
-<body data-page="dashboard">
-  <header class="topbar">
-    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Open menu" aria-controls="main-nav" aria-expanded="false">☰</button>
-    <a class="brand" href="Dashboard.html" aria-label="Daily Audit Dashboard"><span class="brand-mark">DA</span><span><span class="eyebrow brand-caption">Daily item audit</span><span class="brand-title">Daily Audit</span></span></a>
-    <div class="top-actions"><button class="button button-outline" id="export-button" type="button">Print / PDF</button><button class="button button-outline" id="csv-export-button" type="button">CSV</button><a class="button button-light account-link" href="change.html">Change Password</a><button class="button button-light" id="logout-button" type="button">Logout</button></div>
-  </header>
-  <nav class="main-nav" id="main-nav" aria-label="Main pages"><div class="nav-inner"><a class="nav-link is-active" href="Dashboard.html" aria-current="page">Dashboard</a><a class="nav-link" href="Aduit.html">Audit Detail</a><a class="nav-link" href="History.html">History</a><a class="nav-link" href="change.html">Change Password</a></div></nav>
-  <button class="sidebar-backdrop" id="sidebar-backdrop" type="button" aria-label="Close menu"></button>
-  <main class="page">
-    <section id="dashboard-page" class="page-view">
-      <div class="intro dashboard-hero">
-        <div class="dashboard-hero-copy">
-          <p class="eyebrow dashboard-hero-eyebrow">Daily operations overview</p>
-          <h1>Dashboard</h1>
-          <p>View incoming items, outgoing items, balances, and payments in one place.</p>
-          <button class="button dashboard-hero-button" type="button" onclick="location.href='Aduit.html'">+ Add daily record</button>
-        </div>
+<html lang="my">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f3f6fa" />
+    <title>Daily Audit-Dashboard</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="Dashboard.css" />
+    <script src="offline-db.js" defer></script>
+    <script src="auth.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body data-page="dashboard">
+    <header class="topbar">
+      <button
+        class="sidebar-toggle"
+        id="sidebar-toggle"
+        type="button"
+        aria-label="Menu"
+        aria-controls="main-nav"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
+      <a class="brand" href="Dashboard.html" aria-label="Daily Audit Dashboard"
+        ><span class="brand-mark">DA</span
+        ><span
+          ><span class="eyebrow brand-caption">Daily Inventory Audit</span
+          ><span class="brand-title">Daily Audit</span></span
+        ></a
+      >
+      <div class="top-actions">
+        <button class="button button-outline" id="export-button" type="button">
+          Export / PDF</button
+        ><button
+          class="button button-outline"
+          id="csv-export-button"
+          type="button"
+        >
+          CSV</button
+        ><a class="button button-light account-link" href="change.html"
+          >Change Password</a
+        ><button class="button button-light" id="logout-button" type="button">
+          Logout
+        </button>
       </div>
-      <section class="summary-grid" aria-label="Record summary">
-        <article class="summary-card summary-records"><div class="summary-card-top"><span class="summary-label">Total records</span><span class="summary-icon">▤</span></div><strong id="summary-count">0</strong><span class="summary-foot">Records</span></article>
-        <article class="summary-card summary-incoming"><div class="summary-card-top"><span class="summary-label">Incoming value</span><span class="summary-icon">↓</span></div><strong id="summary-total">0</strong><span class="summary-foot">Kyat</span></article>
-        <article class="summary-card summary-outgoing"><div class="summary-card-top"><span class="summary-label">Outgoing value</span><span class="summary-icon">↑</span></div><strong id="summary-paid">0</strong><span class="summary-foot">Kyat</span></article>
-        <article class="summary-card summary-due"><div class="summary-card-top"><span class="summary-label">Amount due</span><span class="summary-icon">◎</span></div><strong id="summary-unpaid">0</strong><span class="summary-foot">Kyat</span></article>
+    </header>
+    <nav class="main-nav" id="main-nav" aria-label="Main Pages">
+      <div class="nav-inner">
+        <a class="nav-link is-active" href="Dashboard.html" aria-current="page"
+          >Dashboard</a
+        ><a class="nav-link" href="Aduit.html">Detail Record</a
+        ><a class="nav-link" href="History.html">History</a
+        ><a class="nav-link" href="change.html">Change Password</a>
+      </div>
+    </nav>
+    <button
+      class="sidebar-backdrop"
+      id="sidebar-backdrop"
+      type="button"
+      aria-label="Close menu"
+    ></button>
+    <main class="page">
+      <section id="dashboard-page" class="page-view">
+        <div class="intro dashboard-hero">
+          <div class="dashboard-hero-copy">
+            <p class="eyebrow dashboard-hero-eyebrow">Daily Activity Summary</p>
+            <h1>Dashboard</h1>
+            <p>
+              ဝင်ပစ္စည်း၊ ထွက်ပစ္စည်း၊ လက်ကျန်နှင့် ငွေပေးချေမှုတို့ကို
+              တစ်စုတည်းကြည့်နိုင်ပါသည်။
+            </p>
+            <button
+              class="button dashboard-hero-button"
+              type="button"
+              onclick="location.href='Aduit.html'"
+            >
+              + နေ့စဉ်မှတ်တမ်းထည့်ရန်
+            </button>
+          </div>
+        </div>
+        <section class="summary-grid" aria-label="မှတ်တမ်းအကျဉ်းချုပ်">
+          <article class="summary-card summary-records">
+            <div class="summary-card-top">
+              <span class="summary-label">မှတ်တမ်းစုစုပေါင်း</span
+              ><span class="summary-icon">▤</span>
+            </div>
+            <strong id="summary-count">0</strong
+            ><span class="summary-foot">မှတ်တမ်း</span>
+          </article>
+          <article class="summary-card summary-incoming">
+            <div class="summary-card-top">
+              <span class="summary-label">ဝင်ရောက်ပစ္စည်းတန်ဖိုး</span
+              ><span class="summary-icon">↓</span>
+            </div>
+            <strong id="summary-total">0</strong
+            ><span class="summary-foot">ကျပ်</span>
+          </article>
+          <article class="summary-card summary-outgoing">
+            <div class="summary-card-top">
+              <span class="summary-label">ထွက်ပေါက်ပစ္စည်းတန်ဖိုး</span
+              ><span class="summary-icon">↑</span>
+            </div>
+            <strong id="summary-paid">0</strong
+            ><span class="summary-foot">ကျပ်</span>
+          </article>
+          <article class="summary-card summary-due">
+            <div class="summary-card-top">
+              <span class="summary-label">ပေးရန်ကျန်ငွေ</span
+              ><span class="summary-icon">◎</span>
+            </div>
+            <strong id="summary-unpaid">0</strong
+            ><span class="summary-foot">ကျပ်</span>
+          </article>
+        </section>
+        <section class="panel stock-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">လက်ကျန်စာရင်း</p>
+              <h2>ဝင်ပစ္စည်း / ထွက်ပစ္စည်း လက်ကျန်</h2>
+            </div>
+          </div>
+          <div id="stock-empty" class="empty-state">
+            <strong>လက်ကျန်ပစ္စည်း မရှိသေးပါ</strong
+            ><span>လက်ကျန်စာရင်းတွက်ရန် ဝင်ပစ္စည်းမှတ်တမ်းထည့်ပါ။</span>
+          </div>
+          <div class="item-table-wrap">
+            <table class="stock-table">
+              <thead>
+                <tr>
+                  <th scope="col">ပစ္စည်းနှင့်လက်ကျန်စာရင်း</th>
+                </tr>
+              </thead>
+              <tbody id="stock-body"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="panel dashboard-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">ရက်စွဲဖြင့် ရှာဖွေရန်</p>
+              <h2>Daily Audit</h2>
+            </div>
+            <div class="dashboard-date-tools">
+              <label class="field"
+                ><span>ရက်စွဲရွေးပါ</span
+                ><input id="dashboard-filter-date" type="date" /></label
+              ><button
+                class="button button-light"
+                id="dashboard-clear-date"
+                type="button"
+              >
+                အားလုံး
+              </button>
+            </div>
+          </div>
+          <div id="dashboard-empty" class="empty-state">
+            <span class="empty-icon">▤</span><strong>မှတ်တမ်း မရှိသေးပါ</strong
+            ><span>နေ့စဉ်စာရင်းစစ်တွင် မှတ်တမ်းအသစ်ထည့်ခြင်းဖြင့် စတင်ပါ။</span>
+          </div>
+          <div id="dashboard-list" class="deliveries-list"></div>
+        </section>
       </section>
-      <section class="panel stock-panel">
-        <div class="section-heading"><div><p class="eyebrow">Stock balance</p><h2>Incoming / outgoing stock balance</h2></div></div>
-        <div id="stock-empty" class="empty-state"><strong>No stock balance yet</strong><span>Add incoming records to calculate stock balances.</span></div>
-        <div class="item-table-wrap"><table class="stock-table"><thead><tr><th scope="col">Item name</th><th scope="col">Total incoming</th><th scope="col">Total outgoing</th><th scope="col">Balance</th></tr></thead><tbody id="stock-body"></tbody></table></div>
-      </section>
-      <section class="panel dashboard-panel">
-        <div class="section-heading"><div><p class="eyebrow">Search by date</p><h2>Daily audit</h2></div><div class="dashboard-date-tools"><label class="field"><span>Select date</span><input id="dashboard-filter-date" type="date"></label><button class="button button-light" id="dashboard-clear-date" type="button">All</button></div></div>
-        <div id="dashboard-empty" class="empty-state"><span class="empty-icon">▤</span><strong>No records yet</strong><span>Start by adding a new record in the daily audit.</span></div>
-        <div id="dashboard-list" class="deliveries-list"></div>
-      </section>
-    </section>
-  </main>
-  <footer class="footer">Daily Audit · Stored locally in your browser</footer>
-</body>
+    </main>
+    <footer class="footer">Daily Audit · Store Browser</footer>
+  </body>
 </html>

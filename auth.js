@@ -13,12 +13,17 @@ function getAccount() {
 }
 
 function saveAccount(account) {
-  localStorage.setItem(ACCOUNT_KEY, JSON.stringify({ email: String(account.email || "").toLowerCase() }));
+  localStorage.setItem(
+    ACCOUNT_KEY,
+    JSON.stringify({ email: String(account.email || "").toLowerCase() }),
+  );
 }
 
 function randomSalt() {
   const bytes = crypto.getRandomValues(new Uint8Array(16));
-  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join(
+    "",
+  );
 }
 
 async function migrateLegacyAccount() {
@@ -26,7 +31,10 @@ async function migrateLegacyAccount() {
     const legacy = JSON.parse(localStorage.getItem(ACCOUNT_KEY));
     if (legacy && legacy.email && typeof legacy.password === "string") {
       await saveOfflineCredential(String(legacy.email), legacy.password);
-      localStorage.setItem(ACCOUNT_KEY, JSON.stringify({ email: String(legacy.email).toLowerCase() }));
+      localStorage.setItem(
+        ACCOUNT_KEY,
+        JSON.stringify({ email: String(legacy.email).toLowerCase() }),
+      );
     }
   } catch (error) {
     console.warn("Could not migrate the legacy account credential.", error);
@@ -55,12 +63,24 @@ function createConnectionIndicator() {
 }
 
 function updateConnectionIndicator(restored = false) {
-  const indicator = document.getElementById("connection-status") || createConnectionIndicator();
-  indicator.className = navigator.onLine ? (restored ? "restored" : "") : "offline";
-  indicator.textContent = navigator.onLine ? (restored ? "Connection restored" : "Online") : "Offline";
+  const indicator =
+    document.getElementById("connection-status") || createConnectionIndicator();
+  indicator.className = navigator.onLine
+    ? restored
+      ? "restored"
+      : ""
+    : "offline";
+  indicator.textContent = navigator.onLine
+    ? restored
+      ? "Connection Internet ပြန်လည်ချိတ်ဆက်ပြီးပါပြီ"
+      : "Online"
+    : "Offline";
   if (restored) {
     window.clearTimeout(updateConnectionIndicator.restoredTimer);
-    updateConnectionIndicator.restoredTimer = window.setTimeout(() => updateConnectionIndicator(false), 4000);
+    updateConnectionIndicator.restoredTimer = window.setTimeout(
+      () => updateConnectionIndicator(false),
+      4000,
+    );
   }
 }
 
@@ -72,15 +92,19 @@ async function probeConnection() {
     updateConnectionIndicator(false);
     return;
   }
-  const controller = typeof AbortController === "function" ? new AbortController() : null;
-  const timeout = controller ? window.setTimeout(() => controller.abort(), 2500) : null;
+  const controller =
+    typeof AbortController === "function" ? new AbortController() : null;
+  const timeout = controller
+    ? window.setTimeout(() => controller.abort(), 2500)
+    : null;
   try {
     const response = await fetch("/api/deliveries", {
       cache: "no-store",
-      headers: { "Accept": "application/json" },
-      signal: controller ? controller.signal : undefined
+      headers: { Accept: "application/json" },
+      signal: controller ? controller.signal : undefined,
     });
-    if (!response.ok) throw new Error("The server did not respond successfully.");
+    if (!response.ok)
+      throw new Error("The server did not respond successfully.");
     if (lastConnectionState === "offline") {
       lastConnectionState = "online";
       updateConnectionIndicator(true);
@@ -104,7 +128,9 @@ window.setInterval(probeConnection, 3000);
 async function passwordVerifier(password, salt) {
   const encoded = new TextEncoder().encode(`${salt}:${password}`);
   const digest = await crypto.subtle.digest("SHA-256", encoded);
-  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
 }
 
 async function saveOfflineCredential(email, password) {
@@ -149,27 +175,31 @@ if (document.body.dataset.authPage) {
       const password = document.getElementById("password").value;
       const message = document.getElementById("login-message");
       if (!isGmail(email)) {
-        message.textContent = "Please enter a valid Gmail address.";
+        message.textContent = "Gmail လိပ်စာ အတည်ဖြစ်စေရန် ရိုက်ထည့်ပါ။";
         return;
       }
       try {
         const response = await fetch("/api/account/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ email, password }),
         });
         const result = await response.json();
         if (!response.ok) {
           const account = getAccount();
-          if (account.email && email.toLowerCase() === account.email.toLowerCase()
-            && await verifyOfflineCredential(email, password)) {
+          if (
+            account.email &&
+            email.toLowerCase() === account.email.toLowerCase() &&
+            (await verifyOfflineCredential(email, password))
+          ) {
             localStorage.setItem(SESSION_KEY, "active");
             window.location.replace("Dashboard.html");
             return;
           }
-          message.textContent = response.status === 401
-            ? "Gmail address or password is incorrect."
-            : result.error;
+          message.textContent =
+            response.status === 401
+              ? "Gmail လိပ်စာ သို့မဟုတ် စကားဝှက် မမှန်ပါ။"
+              : result.error;
           return;
         }
         await saveOfflineCredential(result.email, password);
@@ -178,27 +208,33 @@ if (document.body.dataset.authPage) {
       } catch {
         const account = getAccount();
         const localAccount = getAccount();
-        if (await verifyOfflineCredential(email, password)
-          || (!localAccount.email && password === "123456")) {
+        if (
+          (await verifyOfflineCredential(email, password)) ||
+          (!localAccount.email && password === "123456")
+        ) {
           if (!localAccount.email) await saveOfflineCredential(email, password);
           localStorage.setItem(SESSION_KEY, "active");
           window.location.replace("Dashboard.html");
         } else {
-          message.textContent = "Could not verify the Gmail address or password.";
+          message.textContent =
+            "Gmail သို့မဟုတ် password စိစစ်၍မရပါ။";
         }
       }
     });
   }
 
   const resetPasswordButton = document.getElementById("reset-password-button");
-  const forgotPasswordButton = document.getElementById("forgot-password-button");
+  const forgotPasswordButton = document.getElementById(
+    "forgot-password-button",
+  );
   if (forgotPasswordButton) {
     forgotPasswordButton.addEventListener("click", () => {
       const emailInput = document.getElementById("email");
       const message = document.getElementById("login-message");
       emailInput.focus();
       if (!emailInput.value.trim()) {
-        message.textContent = "Enter your Gmail address, then use Reset Password.";
+        message.textContent =
+          "Gmail ထည့်ပြီး password ပြန်သတ်မှတ်ရန်ကို နှိပ်ပါ။";
       }
     });
   }
@@ -208,28 +244,32 @@ if (document.body.dataset.authPage) {
       const message = document.getElementById("login-message");
       const email = emailInput.value.trim();
       if (!isGmail(email)) {
-        message.textContent = "Enter a Gmail address before resetting the password.";
+        message.textContent = "password ပြန်သတ်မှတ်မီ Gmailကို ထည့်ပါ။";
         emailInput.focus();
         return;
       }
-      if (!window.confirm("Reset the password to the default password 123456?")) return;
+      if (
+        !window.confirm("password ကို original password 123456 သို့ ပြန်သတ်မှတ်မလား?")
+      )
+        return;
       try {
         const response = await fetch("/api/account/reset", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email })
+          body: JSON.stringify({ email }),
         });
         const result = await response.json();
         if (!response.ok) {
-          message.textContent = result.error || "Could not reset the password.";
+          message.textContent = result.error || "password ပြန်သတ်မှတ်၍မရပါ။";
           return;
         }
         await saveOfflineCredential(email, "123456");
         document.getElementById("password").value = "";
         message.className = "auth-message success";
-        message.textContent = "Password reset complete. Sign in with default password 123456.";
+        message.textContent =
+          "password ပြန်သတ်မှတ်ပြီးပါပြီ။ original password 123456 ဖြင့် ဝင်ရောက်ပါ။";
       } catch {
-        message.textContent = "Could not connect to the database server.";
+        message.textContent = "Database သို့ ချိတ်ဆက်၍မရပါ။ password ပြန်သတ်မှတ်၍မရပါ။";
       }
     });
   }
@@ -250,19 +290,19 @@ if (document.body.dataset.authPage) {
         message.textContent = text;
       };
       if (newPassword.length !== 6) {
-        showMessage("The new password must contain exactly 6 characters.");
+        showMessage("New Password တွင်characters ၆ လုံးတိတိ ရှိရမည်။");
         return;
       }
       if (newPassword !== confirmPassword) {
-        showMessage("The new password entries do not match.");
+        showMessage("New Password နှစ်ခု တူညီမှုမရှိပါ။");
         return;
       }
       if (newPassword === currentPassword) {
-        showMessage("Choose a new password that differs from the current password.");
+        showMessage("Current Password နှင့် မတူသော New Password ကို ရွေးပါ။");
         return;
       }
       submitButton.disabled = true;
-      submitButton.textContent = "Changing...";
+      submitButton.textContent = "ပြောင်းနေပါသည်...";
       try {
         const response = await fetch("/api/account/change", {
           method: "POST",
@@ -270,38 +310,52 @@ if (document.body.dataset.authPage) {
           body: JSON.stringify({
             email: account.email,
             currentPassword,
-            newPassword
-          })
+            newPassword,
+          }),
         });
         const result = await response.json();
         if (!response.ok) {
-          showMessage(result.error || "Could not change the password.");
+          showMessage(result.error || "New Password ပြောင်း၍မရပါ။");
           return;
         }
         await saveOfflineCredential(account.email, newPassword);
-        showMessage("Password changed successfully.", true);
+        showMessage("New Password အောင်မြင်စွာ ပြောင်းပြီးပါပြီ။", true);
         changeForm.reset();
         logout();
       } catch (error) {
         if (error instanceof TypeError || error instanceof SyntaxError) {
           const localAccount = getAccount();
-          const localEmailMatches = !localAccount.email || !account.email
-            || localAccount.email.toLowerCase() === String(account.email).toLowerCase();
-          if (localEmailMatches && await verifyOfflineCredential(account.email, currentPassword)) {
-            await saveOfflineCredential(localAccount.email || account.email, newPassword);
-            showMessage("Password changed for this browser only. It was not changed on the server or other devices.", true);
+          const localEmailMatches =
+            !localAccount.email ||
+            !account.email ||
+            localAccount.email.toLowerCase() ===
+              String(account.email).toLowerCase();
+          if (
+            localEmailMatches &&
+            (await verifyOfflineCredential(account.email, currentPassword))
+          ) {
+            await saveOfflineCredential(
+              localAccount.email || account.email,
+              newPassword,
+            );
+            showMessage(
+              "browserအတွက်သာ passwordပြောင်းထားသည်။ server သို့မဟုတ် အခြားစက်များတွင် ပြောင်းမထားပါ။",
+              true,
+            );
             changeForm.reset();
             logout();
           } else {
-            showMessage("Could not connect to the server. Verify the current password stored in this browser.");
+            showMessage(
+              "serverသို့ ချိတ်ဆက်၍မရပါ။ browserတွင် သိမ်းထားသော current passwordကို စိစစ်ပါ။",
+            );
           }
           return;
         }
         console.error("Could not change password with the server.", error);
-        showMessage("Could not read the server response. Please try again.");
+        showMessage("serverတုံ့ပြန်မှုကို ဖတ်၍မရပါ။ ထပ်မံကြိုးစားပါ။");
       } finally {
         submitButton.disabled = false;
-        submitButton.textContent = "Change Password";
+        submitButton.textContent = "change password";
       }
     });
   }
@@ -314,7 +368,10 @@ document.querySelectorAll("[data-password-toggle]").forEach((button) => {
     const showing = input.type === "text";
     input.type = showing ? "password" : "text";
     button.setAttribute("aria-pressed", String(!showing));
-    button.setAttribute("aria-label", showing ? "Show password" : "Hide password");
+    button.setAttribute(
+      "aria-label",
+      showing ? "password ပြရန်" : "password ဝှက်ရန်",
+    );
   });
 });
 
@@ -351,7 +408,9 @@ const installButton = document.getElementById("install-button");
 if (installButton) {
   installButton.addEventListener("click", async () => {
     if (!deferredInstallPrompt) {
-      alert("Use the browser menu and choose Add to Home Screen or Install App.");
+      alert(
+        "browser menu ‘dashboardသို့ထည့်ရန်’ သို့မဟုတ် ‘App တပ်ဆင်ရန်’ ကို ရွေးပါ။",
+      );
       return;
     }
     deferredInstallPrompt.prompt();

@@ -1,6 +1,6 @@
-# Daily Audit
+# နေ့စဉ် စာရင်းစစ်
 
-A Daily Audit application for recording incoming and outgoing items, stock balances, payments, audit history, search, filters, and JSON/CSV exports.
+ဝင်ပစ္စည်းနှင့် ထွက်ပစ္စည်း၊ လက်ကျန်၊ ငွေပေးချေမှု၊ မှတ်တမ်း၊ ရှာဖွေမှု၊ စစ်ထုတ်မှုနှင့် JSON/CSV ထုတ်ယူမှုတို့ကို မှတ်တမ်းတင်နိုင်သော နေ့စဉ် စာရင်းစစ် အက်ပ်။
 
 ## Run the application
 

@@ -1,51 +1,226 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f3f6fa">
-  <title>Daily Audit - Detail</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="Aduit.css">
-  <script src="offline-db.js" defer></script>
-  <script src="auth.js" defer></script>
-  <script src="app.js" defer></script>
-</head>
-<body data-page="detail">
-  <header class="topbar">
-    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Open menu" aria-controls="main-nav" aria-expanded="false">☰</button>
-    <a class="brand" href="Dashboard.html" aria-label="Daily Audit Dashboard"><span class="brand-mark">DA</span><span><span class="eyebrow brand-caption">Daily item audit</span><span class="brand-title">Daily Audit</span></span></a>
-    <div class="top-actions"><button class="button button-outline" id="export-button" type="button">Print / PDF</button><button class="button button-outline" id="csv-export-button" type="button">CSV</button><a class="button button-light account-link" href="change.html">Change Password</a><button class="button button-light" id="logout-button" type="button">Logout</button></div>
-  </header>
-  <nav class="main-nav" id="main-nav" aria-label="Main pages"><div class="nav-inner"><a class="nav-link" href="Dashboard.html">Dashboard</a><a class="nav-link is-active" href="Aduit.html" aria-current="page">Audit Detail</a><a class="nav-link" href="History.html">History</a><a class="nav-link" href="change.html">Change Password</a></div></nav>
-  <button class="sidebar-backdrop" id="sidebar-backdrop" type="button" aria-label="Close menu"></button>
-  <main class="page">
-    <section id="detail-page" class="page-view">
-      <div class="intro detail-intro"><div><p class="eyebrow">Daily audit</p><h1>Audit Detail</h1><p>Record, search, and edit audits one date at a time.</p></div><span class="storage-note"><span class="status-dot"></span> IndexedDB Offline Storage</span></div>
-      <section class="panel form-panel">
-        <div class="section-heading"><div><p class="eyebrow" id="form-eyebrow">New record</p><h2 id="form-title">Record incoming or outgoing items</h2></div><button class="button button-light cancel-edit" id="cancel-edit" type="button" hidden>Cancel editing</button></div>
-        <form id="delivery-form">
-          <div class="form-meta">
-            <label class="field"><span>Record date</span><input id="delivery-date" name="date" type="date" required></label>
-            <label class="field"><span>Record type</span><select id="movement-type" name="movementType"><option value="incoming">Incoming items</option><option value="outgoing">Outgoing items</option></select></label>
-            <label class="field movement-in-only" id="truck-field"><span>Truck number / name</span><input id="truck-name" name="truck" type="text" maxlength="80" placeholder="Example - 1A/1234" required></label>
-            <label class="field"><span id="partner-label">Supplier name</span><input id="supplier-name" name="supplier" type="text" maxlength="100" placeholder="Supplier name" required></label>
-            <label class="field"><span>Prepared by</span><input id="prepared-by" name="preparedBy" type="text" maxlength="100" placeholder="Prepared by" required></label>
-            <label class="field movement-in-only" id="paid-field"><span>Amount paid (Kyat)</span><input id="paid-amount" name="paidAmount" type="number" inputmode="decimal" min="0" step="any" value="0" required></label>
+<html lang="my">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f3f6fa" />
+    <title>Daily Audit</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="Aduit.css" />
+    <script src="offline-db.js" defer></script>
+    <script src="auth.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body data-page="detail">
+    <header class="topbar">
+      <button
+        class="sidebar-toggle"
+        id="sidebar-toggle"
+        type="button"
+        aria-label="Menu"
+        aria-controls="main-nav"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
+      <a class="brand" href="Dashboard.html" aria-label="Daily Audit Dashboard"
+        ><span class="brand-mark">DA</span
+        ><span
+          ><span class="eyebrow brand-caption">Daily Inventory Audit</span
+          ><span class="brand-title">Daily Audit</span></span
+        ></a
+      >
+      <div class="top-actions">
+        <button class="button button-outline" id="export-button" type="button">
+          Export / PDF</button
+        ><button
+          class="button button-outline"
+          id="csv-export-button"
+          type="button"
+        >
+          CSV</button
+        ><a class="button button-light account-link" href="change.html"
+          >Change Password</a
+        ><button class="button button-light" id="logout-button" type="button">
+          Logout
+        </button>
+      </div>
+    </header>
+    <nav class="main-nav" id="main-nav" aria-label="Main Pages">
+      <div class="nav-inner">
+        <a class="nav-link" href="Dashboard.html">Dashboard</a
+        ><a class="nav-link is-active" href="Aduit.html" aria-current="page"
+          >Detail Record</a
+        ><a class="nav-link" href="History.html">History</a
+        ><a class="nav-link" href="change.html">Change Password</a>
+      </div>
+    </nav>
+    <button
+      class="sidebar-backdrop"
+      id="sidebar-backdrop"
+      type="button"
+      aria-label="Close menu"
+    ></button>
+    <main class="page">
+      <section id="detail-page" class="page-view">
+        <div class="intro detail-intro">
+          <div>
+            <p class="eyebrow">Daily Record</p>
+            <h1>Detail Record</h1>
+            <p>You can add, search, and edit daily records.</p>
           </div>
-          <div class="items-heading"><div><h3>Items <span id="item-type-count" class="item-type-count">1 item</span></h3><p>Enter the quantity and unit price for each item.</p></div><button class="button button-light" id="add-item-button" type="button">+ Add item</button></div>
-          <div class="item-table-wrap"><table class="item-table"><thead><tr><th scope="col">Item name</th><th scope="col">Quantity</th><th scope="col">Unit price (Kyat)</th><th scope="col">Total (Kyat)</th><th scope="col"><span class="visually-hidden">Remove</span></th></tr></thead><tbody id="items-body"></tbody></table></div>
-          <div class="form-bottom"><div class="total-summary"><p class="total-preview">Item total <strong><span id="form-total">0</span> Kyat</strong></p><p class="due-preview">Amount due <strong><span id="form-due">0</span> Kyat</strong></p></div><button class="button button-primary" id="save-button" type="submit">Save record</button></div>
+          <span class="storage-note"
+            ><span class="status-dot"></span> Stored in IndexedDB</span
+          >
+        </div>
+        <form id="delivery-form" class="detail-form">
+          <div class="form-meta">
+            <label class="field"
+              ><span>Record date</span
+              ><input id="delivery-date" name="date" type="date" required
+            /></label>
+            <label class="field"
+              ><span>Record type</span
+              ><select id="movement-type" name="movementType">
+                <option value="incoming">အဝင်စာရင်း</option>
+                <option value="outgoing">အထွက်စာရင်း</option>
+              </select></label
+            >
+            <label class="field movement-in-only" id="truck-field"
+              ><span>Truck number / name</span
+              ><input
+                id="truck-name"
+                name="truck"
+                type="text"
+                maxlength="80"
+                placeholder="Example - 1A/1234"
+                required
+            /></label>
+            <label class="field"
+              ><span id="partner-label">ပစ္စည်းပို့သူ</span
+              ><input
+                id="supplier-name"
+                name="supplier"
+                type="text"
+                maxlength="100"
+                placeholder="Supplier Name"
+                required
+            /></label>
+            <label class="field"
+              ><span>စာရင်းသွင်းသူ</span
+              ><input
+                id="prepared-by"
+                name="preparedBy"
+                type="text"
+                maxlength="100"
+                placeholder="Prepared By"
+                required
+            /></label>
+            <label class="field movement-in-only" id="paid-field"
+              ><span>ပေးငွေ (MMK)</span
+              ><input
+                id="paid-amount"
+                name="paidAmount"
+                type="number"
+                inputmode="decimal"
+                min="0"
+                step="any"
+                value="0"
+                required
+            /></label>
+          </div>
+          <div class="items-heading">
+            <div>
+              <h3>
+                Items
+                <span id="item-type-count" class="item-type-count"
+                  >ပစ္စည်းတစ်ခု</span
+                >
+              </h3>
+              <p>Add the quantity and unit price for each item.</p>
+            </div>
+            <button
+              class="button button-light"
+              id="add-item-button"
+              type="button"
+            >
+              + ပစ္စည်းထည့်ရန်
+            </button>
+          </div>
+          <div class="item-table-wrap">
+            <table class="item-table">
+              <thead>
+                <tr>
+                  <th scope="col">ပစ္စည်းအမည်</th>
+                  <th scope="col">အရေအတွက်</th>
+                  <th scope="col">ဈေးနှုန်း(MMK)</th>
+                  <th scope="col">စုစုပေါင်း(MMK)</th>
+                  <th scope="col">
+                    <span class="visually-hidden">Delete Item</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="items-body"></tbody>
+            </table>
+          </div>
+          <div class="form-bottom">
+            <div class="total-summary">
+              <p class="total-preview">
+                ပစ္စည်းစုစုပေါင်း
+                <strong><span id="form-total">0</span> MMK</strong>
+              </p>
+              <p class="due-preview">
+                Amount Due <strong><span id="form-due">0</span> MMK</strong>
+              </p>
+            </div>
+            <button
+              class="button button-primary"
+              id="save-button"
+              type="submit"
+            >
+              Save Record
+            </button>
+          </div>
         </form>
       </section>
       <section class="panel records-panel">
-        <div class="section-heading records-heading"><div><p class="eyebrow">Previous records</p><h2>Search or edit by date</h2></div><div class="filter-tools"><label class="field filter-field search-field"><span>Search by item or supplier name</span><input id="filter-text" type="search" placeholder="Enter a name"></label><label class="field filter-field"><span>Search by date</span><input id="filter-date" type="date"></label><button class="button button-light clear-filter" id="clear-filter" type="button">All</button></div></div>
-        <div id="detail-empty" class="empty-state"><span class="empty-icon" aria-hidden="true">▤</span><strong id="detail-empty-title">No records yet</strong><span id="detail-empty-description">Add a new record using the form above.</span></div>
+        <div class="section-heading records-heading">
+          <div>
+            <p class="eyebrow">ယခင်မှတ်တမ်းများ</p>
+            <h2>ရက်စွဲဖြင့် ရှာဖွေ/ပြင်ဆင်ရန်</h2>
+          </div>
+          <div class="filter-tools">
+            <label class="field filter-field search-field"
+              ><span>ပစ္စည်း/ပို့သူအမည်ဖြင့်ရှာဖွေရန်</span
+              ><input
+                id="filter-text"
+                type="search"
+                placeholder="အမည်ရိုက်ပါ" /></label
+            ><label class="field filter-field"
+              ><span>ရက်စွဲ</span><input id="filter-date" type="date" /></label
+            ><button
+              class="button button-light clear-filter"
+              id="clear-filter"
+              type="button"
+            >
+              အားလုံး
+            </button>
+          </div>
+        </div>
+        <div id="detail-empty" class="empty-state">
+          <span class="empty-icon" aria-hidden="true">▤</span>
+          <strong id="detail-empty-title">မှတ်တမ်း မရှိသေးပါ</strong>
+          <span id="detail-empty-description">အပေါ်ဖောင်ဖြင့် မှတ်တမ်းအသစ်ထည့်ပါ။</span>
+        </div>
         <div id="detail-list" class="deliveries-list"></div>
       </section>
-      <p id="app-message" class="app-message" role="status" aria-live="polite"></p>
-    </section>
-  </main>
-  <footer class="footer"></footer>
-</body>
+      <p
+        id="app-message"
+        class="app-message"
+        role="status"
+        aria-live="polite">
+      </p>
+    </main>
+    <footer class="footer"></footer>
+  </body>
 </html>

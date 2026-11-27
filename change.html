@@ -1,69 +1,130 @@
 <!doctype html>
 <html lang="my">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#dceef5">
-  <title>Daily Audit - Change Password</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="login.css">
-  <link rel="stylesheet" href="change.css">
-</head>
-<body data-auth-page="change">
-  <main class="auth-shell">
-    <section class="auth-card" aria-labelledby="change-title">
-      <a class="back-link" href="Dashboard.html">← Dashboard</a>
-      <div class="brand-mark change-avatar" aria-hidden="true">
-        <svg viewBox="0 0 24 24" focusable="false">
-          <rect x="5" y="10" width="14" height="11" rx="2"></rect>
-          <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-        </svg>
-      </div>
-      <p class="eyebrow">Daily Audit</p>
-      <h1 id="change-title">Change Password </h1>
-      <p class="subtitle">New Password</p>
-      <form id="change-form">
-        <label class="field">
-          <span>Current Password</span>
-          <span class="password-control change-input-control">
-            <svg class="change-field-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <rect x="5" y="10" width="14" height="11" rx="2"></rect>
-              <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-            </svg>
-            <input id="current-password" type="password" autocomplete="current-password" required>
-            <button class="password-toggle" type="button" data-password-toggle="current-password" aria-label="Show password" aria-pressed="false">👁</button>
-          </span>
-        </label>
-        <label class="field">
-          <span>New Password (6words)</span>
-          <span class="password-control change-input-control">
-            <svg class="change-field-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <rect x="5" y="10" width="14" height="11" rx="2"></rect>
-              <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-            </svg>
-            <input id="new-password" type="password" minlength="6" maxlength="6" autocomplete="new-password" required>
-            <button class="password-toggle" type="button" data-password-toggle="new-password" aria-label="Show password" aria-pressed="false">👁</button>
-          </span>
-        </label>
-        <label class="field">
-          <span>Confirm New Password</span>
-          <span class="password-control change-input-control">
-            <svg class="change-field-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <rect x="5" y="10" width="14" height="11" rx="2"></rect>
-              <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-            </svg>
-            <input id="confirm-password" type="password" minlength="6" maxlength="6" autocomplete="new-password" required>
-            <button class="password-toggle" type="button" data-password-toggle="confirm-password" aria-label="Show password" aria-pressed="false">👁</button>
-          </span>
-        </label>
-        <p id="change-message" class="auth-message" role="status"></p>
-        <button class="auth-button" type="submit">Change Password</button>
-      </form>
-    </section>
-  </main>
-  <script src="offline-db.js"></script>
-  <script src="auth.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#dceef5" />
+    <title>Change Password</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="stylesheet" href="login.css" />
+    <link rel="stylesheet" href="change.css" />
+  </head>
+  <body data-auth-page="change">
+    <main class="auth-shell">
+      <section class="auth-card" aria-labelledby="change-title">
+        <a class="back-link" href="Dashboard.html">← Dashboard</a>
+        <div class="brand-mark change-avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+          </svg>
+        </div>
+        <p class="eyebrow">Daily Audit</p>
+        <h1 id="change-title">Change Password</h1>
+        <p class="subtitle">New Password</p>
+        <form id="change-form">
+          <label class="field">
+            <span>Current Password</span>
+            <span class="password-control change-input-control">
+              <svg
+                class="change-field-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+              </svg>
+              <input
+                id="current-password"
+                type="password"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                class="password-toggle"
+                type="button"
+                data-password-toggle="current-password"
+                aria-label="Show Password"
+                aria-pressed="false"
+              >
+                👁
+              </button>
+            </span>
+          </label>
+          <label class="field">
+            <span>New Password (6 characters)</span>
+            <span class="password-control change-input-control">
+              <svg
+                class="change-field-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+              </svg>
+              <input
+                id="new-password"
+                type="password"
+                minlength="6"
+                maxlength="6"
+                autocomplete="new-password"
+                required
+              />
+              <button
+                class="password-toggle"
+                type="button"
+                data-password-toggle="new-password"
+                aria-label="Show Password"
+                aria-pressed="false"
+              >
+                👁
+              </button>
+            </span>
+          </label>
+          <label class="field">
+            <span>Confirm New Password</span>
+            <span class="password-control change-input-control">
+              <svg
+                class="change-field-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+              </svg>
+              <input
+                id="confirm-password"
+                type="password"
+                minlength="6"
+                maxlength="6"
+                autocomplete="new-password"
+                required
+              />
+              <button
+                class="password-toggle"
+                type="button"
+                data-password-toggle="confirm-password"
+                aria-label="Show Password"
+                aria-pressed="false"
+              >
+                👁
+              </button>
+            </span>
+          </label>
+          <p id="change-message" class="auth-message" role="status"></p>
+          <button class="auth-button" type="submit">Change Password</button>
+        </form>
+      </section>
+    </main>
+    <script src="offline-db.js"></script>
+    <script src="auth.js"></script>
+  </body>
 </html>

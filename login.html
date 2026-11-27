@@ -1,61 +1,108 @@
 <!doctype html>
 <html lang="my">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#dceef5">
-  <title>Daily Audit - Login</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="stylesheet" href="login.css">
-</head>
-<body data-auth-page="login">
-  <main class="auth-shell">
-    <section class="auth-card" aria-labelledby="login-title">
-      <div class="brand-mark login-avatar" aria-hidden="true">
-        <svg viewBox="0 0 24 24" focusable="false">
-          <circle cx="12" cy="8" r="4"></circle>
-          <path d="M4.5 20a7.5 7.5 0 0 1 15 0"></path>
-        </svg>
-      </div>
-      <p class="eyebrow">Daily Audit</p>
-      <h1 id="login-title">Login</h1>
-      <p class="subtitle">Welcome</p>
-      <form id="login-form">
-        <label class="field">
-          <span>Gmail address</span>
-          <span class="login-input-control">
-            <svg class="login-field-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <rect x="3.5" y="5.5" width="17" height="13" rx="2.5"></rect>
-              <path d="m5 7 7 5.5L19 7"></path>
-            </svg>
-            <input id="email" type="email" inputmode="email" autocomplete="username" placeholder="name@gmail.com" required>
-          </span>
-        </label>
-        <label class="field">
-          <span>Password</span>
-          <span class="password-control login-input-control">
-            <svg class="login-field-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <rect x="5" y="10" width="14" height="11" rx="2"></rect>
-              <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-            </svg>
-            <input id="password" type="password" autocomplete="current-password" placeholder="Password" required>
-            <button class="password-toggle" type="button" data-password-toggle="password" aria-label="Show password" aria-pressed="false">👁</button>
-          </span>
-        </label>
-        <div class="login-help-row">
-          <button id="forgot-password-button" class="forgot-password-text" type="button">Forgot password</button>
-          <button id="reset-password-button" class="reset-link" type="button">Reset Password</button>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#dceef5" />
+    <title>Daily Audit - Login</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body data-auth-page="login">
+    <main class="auth-shell">
+      <section class="auth-card" aria-labelledby="login-title">
+        <div class="brand-mark login-avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M4.5 20a7.5 7.5 0 0 1 15 0"></path>
+          </svg>
         </div>
-        <p id="login-message" class="auth-message" role="alert"></p>
-        <button class="auth-button" type="submit">Sign in</button>
-      </form>
-      <p class="default-note">For a new Gmail account, use the default password: <strong>123456</strong></p>
-      <button id="install-button" class="install-button" type="button" hidden>Install as a mobile app</button>
-    </section>
-  </main>
-  <script src="offline-db.js"></script>
-  <script src="auth.js"></script>
-</body>
+        <p class="eyebrow">Daily Audit</p>
+        <h1 id="login-title">Login</h1>
+        <p class="subtitle">Welcome</p>
+        <form id="login-form">
+          <label class="field">
+            <span>Gmail</span>
+            <span class="login-input-control">
+              <svg
+                class="login-field-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <rect x="3.5" y="5.5" width="17" height="13" rx="2.5"></rect>
+                <path d="m5 7 7 5.5L19 7"></path>
+              </svg>
+              <input
+                id="email"
+                type="email"
+                inputmode="email"
+                autocomplete="username"
+                placeholder="name@gmail.com"
+                required
+              />
+            </span>
+          </label>
+          <label class="field">
+            <span>Password</span>
+            <span class="password-control login-input-control">
+              <svg
+                class="login-field-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+              </svg>
+              <input
+                id="password"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Password"
+                required
+              />
+              <button
+                class="password-toggle"
+                type="button"
+                data-password-toggle="password"
+                aria-label="Show password"
+                aria-pressed="false"
+              >
+                👁
+              </button>
+            </span>
+          </label>
+          <div class="login-help-row">
+            <button
+              id="forgot-password-button"
+              class="forgot-password-text"
+              type="button"
+            >
+              Forgot password?
+            </button>
+            <button id="reset-password-button" class="reset-link" type="button">
+              Reset password
+            </button>
+          </div>
+          <p id="login-message" class="auth-message" role="alert"></p>
+          <button class="auth-button" type="submit">Login</button>
+        </form>
+        <p class="default-note">
+          For new Gmail accounts, use the default password:
+          <strong>123456</strong>
+        </p>
+        <button id="install-button" class="install-button" type="button" hidden>
+          Mobile App
+        </button>
+      </section>
+    </main>
+    <script src="offline-db.js"></script>
+    <script src="auth.js"></script>
+  </body>
 </html>

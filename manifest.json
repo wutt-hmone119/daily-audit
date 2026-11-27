@@ -1,6 +1,6 @@
 {
-  "name": "Daily Audit",
-  "short_name": "Daily Audit",
+  "name": "နေ့စဉ် စာရင်းစစ်",
+  "short_name": "နေ့စဉ် စာရင်းစစ်",
   "start_url": "login.html",
   "scope": "./",
   "id": "daily-audit",
