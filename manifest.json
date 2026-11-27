@@ -2,6 +2,8 @@
   "name": "Daily Audit",
   "short_name": "Daily Audit",
   "start_url": "login.html",
+  "scope": "./",
+  "id": "daily-audit",
   "display": "standalone",
   "background_color": "#f3f6fa",
   "theme_color": "#1d4ed8",

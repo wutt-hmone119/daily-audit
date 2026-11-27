@@ -21,7 +21,7 @@
       </div>
       <p class="eyebrow">Daily Audit</p>
       <h1 id="login-title">Login</h1>
-      <p class="subtitle">မင်္ဂလာပါ။ ဆက်လက်အသုံးပြုရန် အကောင့်ဝင်ပါ။</p>
+      <p class="subtitle">Welcome</p>
       <form id="login-form">
         <label class="field">
           <span>Gmail address</span>
@@ -41,17 +41,21 @@
               <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
             </svg>
             <input id="password" type="password" autocomplete="current-password" placeholder="Password" required>
-            <button class="password-toggle" type="button" data-password-toggle="password" aria-label="Password ကြည့်ရန်" aria-pressed="false">👁</button>
+            <button class="password-toggle" type="button" data-password-toggle="password" aria-label="Show password" aria-pressed="false">👁</button>
           </span>
         </label>
-        <button id="reset-password-button" class="reset-link" type="button">Password မေ့နေပါသလား။ Reset Password</button>
+        <div class="login-help-row">
+          <button id="forgot-password-button" class="forgot-password-text" type="button">Forgot password</button>
+          <button id="reset-password-button" class="reset-link" type="button">Reset Password</button>
+        </div>
         <p id="login-message" class="auth-message" role="alert"></p>
-        <button class="auth-button" type="submit">ဝင်ရောက်မည်</button>
+        <button class="auth-button" type="submit">Sign in</button>
       </form>
-      <p class="default-note">Gmail အသစ်ဖြင့် စတင်ဝင်ရောက်ရန် Default password: <strong>123456</strong></p>
-      <button id="install-button" class="install-button" type="button" hidden>Mobile App အဖြစ်ထည့်သွင်းရန်</button>
+      <p class="default-note">For a new Gmail account, use the default password: <strong>123456</strong></p>
+      <button id="install-button" class="install-button" type="button" hidden>Install as a mobile app</button>
     </section>
   </main>
+  <script src="offline-db.js"></script>
   <script src="auth.js"></script>
 </body>
 </html>

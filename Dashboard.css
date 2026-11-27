@@ -9,7 +9,7 @@
   --blue-dark: #1e40af;
   --green: #14876b;
   --red: #c24d5b;
-  font-family: "DM Sans", "Noto Sans Myanmar", sans-serif;
+  font-family: "DM Sans", "Segoe UI", sans-serif;
   font-synthesis: none;
 }
 
@@ -246,7 +246,6 @@ button { cursor: pointer; }
 .delivery-item { display: grid; grid-template-columns: minmax(100px, 1fr) auto auto; gap: 15px; padding: 9px 0; border-bottom: 1px solid #f4f5f8; color: #617088; font-size: 12px; }
 .delivery-item:last-child { border-bottom: 0; }
 .delivery-item strong { color: #34425a; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
-.delivery-category-total { padding: 8px 0; color: #27466f; font-size: 12px; font-weight: 700; text-align: right; }
 .delivery-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 0 18px 14px; }
 .small-button { padding: 6px 10px; border: 1px solid #e3e7ef; border-radius: 7px; background: #fff; color: #52617a; font-size: 11px; font-weight: 600; }
 .small-button:hover { background: #f7f8fb; }
@@ -490,7 +489,7 @@ button { cursor: pointer; }
     display: block;
     margin-bottom: 4px;
     color: var(--muted);
-    content: "စုစုပေါင်း";
+    content: "Total";
     font-size: 10px;
   }
   .item-table .line-total { padding: 0; text-align: left; font-weight: 700; }
@@ -501,8 +500,8 @@ button { cursor: pointer; }
     color: var(--muted);
     font-size: 10px;
   }
-  .item-table td:nth-child(2)::before { content: "အရေအတွက်"; }
-  .item-table td:nth-child(3)::before { content: "တစ်ခုတန်ဖိုး"; }
+  .item-table td:nth-child(2)::before { content: "Quantity"; }
+  .item-table td:nth-child(3)::before { content: "Unit price"; }
 }
 
 .main-nav {
@@ -529,3 +528,146 @@ button { cursor: pointer; }
   color: #116e9e;
 }
 .nav-link.is-active::after { background: #1498d0; }
+
+/* Refined dashboard cards */
+body {
+  background:
+    radial-gradient(circle at 88% 3%, rgba(59, 130, 246, .08), transparent 25rem),
+    linear-gradient(180deg, #f8fbff 0, var(--canvas) 310px);
+}
+
+.topbar {
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 3px 18px rgba(32, 57, 92, .05);
+  backdrop-filter: blur(12px);
+}
+
+.brand-mark {
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e5efff, #d7eaff);
+  box-shadow: inset 0 0 0 1px rgba(29, 78, 216, .06);
+}
+
+.panel,
+.summary-card {
+  border-color: #e2eaf4;
+  box-shadow: 0 10px 28px rgba(31, 53, 85, .055);
+}
+
+.summary-card {
+  border-width: 1px;
+  border-top: 3px solid var(--summary-accent, #4776dc);
+  border-radius: 16px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, .98), rgba(250, 252, 255, .98));
+}
+
+.summary-card-top {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.summary-label {
+  color: #60738a;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.summary-icon {
+  border: 1px solid rgba(71, 118, 220, .08);
+  box-shadow: 0 4px 10px rgba(63, 96, 145, .06);
+}
+
+.summary-card strong {
+  font-size: 26px;
+  letter-spacing: -.02em;
+}
+
+.section-heading {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.stock-table,
+.dashboard-panel .deliveries-list {
+  margin-top: 2px;
+}
+
+.stock-table thead th {
+  padding: 11px 12px;
+  border-radius: 8px 8px 0 0;
+  background: #f7f9fc;
+  color: #65758a;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.stock-table tbody tr {
+  border-radius: 10px;
+}
+
+.stock-table tbody tr:hover {
+  background: #fafcff;
+}
+
+.dashboard-date-tools .field input,
+.dashboard-date-tools .button {
+  border-radius: 10px;
+}
+
+.delivery-card {
+  border: 1px solid #dfe8f2;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(43, 70, 106, .055);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+
+.delivery-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(43, 70, 106, .09);
+}
+
+.date-tile {
+  width: 52px;
+  height: 52px;
+  flex-basis: 52px;
+  border: 1px solid #cadcf7;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #edf4ff, #dfeaff);
+  box-shadow: 0 5px 13px rgba(56, 102, 176, .08);
+}
+
+.delivery-amount {
+  min-width: 154px;
+  padding: 10px 12px;
+  border: 1px solid #edf1f6;
+  border-radius: 12px;
+  background: #fbfcfe;
+}
+
+.badge {
+  border: 1px solid transparent;
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+
+.badge-paid { border-color: #cceadf; background: #effaf6; }
+.badge-unpaid { border-color: #f0dcae; background: #fff8ea; }
+
+.delivery-items {
+  margin: 0 20px 8px 86px;
+  padding: 2px 12px 8px;
+  border: 1px solid #edf1f6;
+  border-radius: 12px;
+  background: #fafcfe;
+}
+
+.empty-state {
+  border: 1px dashed #dce6f1;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fbfdff, #f7fafc);
+}

@@ -1,45 +1,73 @@
 # Daily Audit
 
-Dashboard နှင့် နေ့စဉ်စာအုပ်/Detail စာမျက်နှာနှစ်ခုပါသော ပစ္စည်းအဝင်/အထွက်စာရင်း app ဖြစ်သည်။ ရက်စွဲ၊ ကား၊ ပို့သူ/လက်ခံသူ၊ စာရင်းပြုစုသူ၊ မှတ်တမ်းတင်သည့်အချိန်၊ ပစ္စည်းအရေအတွက်/တန်ဖိုးနှင့် ငွေပေးချေမှုကို မှတ်တမ်းတင်ပေးသည်။
+A Daily Audit application for recording incoming and outgoing items, stock balances, payments, audit history, search, filters, and JSON/CSV exports.
 
-## အသုံးပြုပုံ
+## Run the application
 
-1. `index.html` ကို Chrome သို့မဟုတ် Edge ဖြင့်ဖွင့်ပါ။
-2. `နေ့စဉ်စာအုပ် / Detail` ကိုဖွင့်ပြီး ပစ္စည်းအဝင် သို့မဟုတ် အထွက်ကို ရွေးပါ။ အဝင်စာရင်းတွင် ကား၊ ပို့သူ၊ စာရင်းပြုစုသူနှင့် ပေးချေငွေကို ဖြည့်ပါ။ အထွက်စာရင်းတွင် လက်ခံသူနှင့် စာရင်းပြုစုသူကို ဖြည့်ပါ။
-3. ပစ္စည်းတစ်ခုချင်းစီ၏ Category၊ အရေအတွက်နှင့် တစ်ခုတန်ဖိုးကို ဖြည့်ပါ။ `ပစ္စည်းထပ်ထည့်ရန်` ဖြင့် ပစ္စည်းများ ထပ်ပေါင်းနိုင်ပြီး ပစ္စည်းစုစုပေါင်းနှင့် Category အလိုက်တန်ဖိုးကို အလိုအလျောက်တွက်ပေးသည်။ အရင်ကသိမ်းထားသော Category မပါသည့်စာရင်းများကို `အထွေထွေ` အဖြစ် သတ်မှတ်ပေးသည်။
-4. အဖွင့်လက်ကျန်ကို ပစ္စည်းတစ်မျိုးချင်းစီအတွက် သုညမှစတွက်သည်။ ထွက်စာရင်းတွင် ရနိုင်သောလက်ကျန်ထက် ပိုထုတ်ရန် ကြိုးစားပါက သိမ်းဆည်းခွင့်မပြုပါ။ Dashboard တွင် ပစ္စည်းအဝင်၊ အထွက်နှင့် လက်ကျန်ကို တွေ့နိုင်သည်။
-5. အဝင်စာရင်းအတွက် `ပေးချေပြီးငွေ` ကိုဖြည့်ပါ။ မပေးရသေးသောငွေကို အလိုအလျောက်တွက်ချက်ပြီး Dashboard နှင့် စာရင်းတိုင်းတွင် ပြသသည်။ တစ်စိတ်တစ်ပိုင်းပေးချေမှုကိုလည်း မှတ်တမ်းတင်နိုင်သည်။
-6. အရင်ရက်စာရင်းများကို ရက်စွဲဖြင့် ရှာဖွေပြီး `ပြင်ဆင်ရန်` သို့မဟုတ် `ဖျက်ရန်` ကိုရွေးပါ။ ပြင်ဆင်ရာတွင် မူလမှတ်တမ်းတင်ချိန်ကို မပြောင်းလဲဘဲထားသည်။ အဝင်စာရင်းဖျက်ခြင်းကြောင့် လက်ကျန်မလုံလောက်တော့ပါက စာရင်းကို မဖျက်နိုင်ပါ။
-7. `Excel အတွက် CSV ထုတ်ရန်` မှတ်တမ်းများကို Excel ဖြင့်ဖွင့်နိုင်သော CSV ဖိုင်အဖြစ် ထုတ်ယူနိုင်သည်။ Detail စာမျက်နှာတွင် ရက်စွဲရှာထားပါက ထိုရက်၏စာရင်းကိုသာ ထုတ်ပေးမည်။
+1. Start the application with `npm start` or `start-app.bat`.
+2. Open `http://localhost:8091/login.html`.
+3. Sign in with a Gmail address.
+4. Use the Dashboard, Audit Detail, and History pages to manage records.
 
-## သိမ်းဆည်းမှု
+The default password is `123456`.
 
-စာရင်းများကို လက်ရှိစက်၏ browser `localStorage` ထဲတွင် သိမ်းသည်။ Internet သို့မဟုတ် server မလိုပါ၊ သို့သော် အခြားစက်/ဘရောက်ဇာနှင့် အလိုအလျောက် မမျှဝေပါ။ Server မချိတ်ဆက်နိုင်ချိန် Password ပြောင်းပါက လက်ရှိ browser အတွက်သာ ပြောင်းလဲမည်ဖြစ်သည်။ CSV export ကို အရန်သိမ်းဆည်းရန် အသုံးပြုပါ။ Browser data ကိုရှင်းလင်းပါက browser ထဲရှိစာရင်းများ ပျောက်နိုင်သည်။
+## Features
 
-ဖိုင်များကို တစ်ဖိုလ်ဒါတည်းတွင်ထားပါ။
+- Dashboard totals and stock balances
+- Add, view, edit, and delete audit records
+- Incoming and outgoing item records
+- Payment and outstanding balance tracking
+- Date and text search
+- Audit history
+- CSV export
+- JSON import and export
+- Offline PWA support
+- IndexedDB local storage
+- Automatic synchronization with MySQL
 
-- `index.html` — `Dashboard.html` သို့ အလိုအလျောက်ပြောင်းပေးသော စာမျက်နှာ
-- `Dashboard.html` / `Dashboard.css` — Dashboard
-- `Aduit.html` / `Aduit.css` — နေ့စဉ်စာအုပ် / Detail
-- `History.html` / `History.css` — JSON မှတ်တမ်း History
-- `app.js` — အဝင်/အထွက်လက်ကျန်၊ ငွေတွက်ချက်မှု၊ browser storage၊ CSV/JSON export
-- `login.html` / `login.css` — Gmail နှင့် password ဖြင့် login
-- `change.html` / `change.css` — Password ပြောင်းရန်
-- `auth.js` — အကောင့်နှင့် session စီမံခြင်း
-- `start-app.bat` — Offline PWA ကို Node localhost server ဖြင့်စတင်ရန်
-- Password အတွက် မျက်လုံး icon ကိုနှိပ်၍ ပြ/ဝှက်နိုင်သည်
+## Offline storage
 
-## MySQL သိမ်းဆည်းမှု
+Audit records are stored in the `daily-audit-local-v1` IndexedDB database.
 
-- `server.js` မှ Daily Audit records နှင့် account password ကို MySQL သို့သိမ်းသည်။
-- Database/table စနစ်ကို `schema.sql` ဖြင့်ဖန်တီးသည်။
-- Category column မရှိသေးသော ရှိပြီးသား MySQL database များကို server စတင်ချိန်တွင် အလိုအလျောက်ပြင်ဆင်သည်။
-- ချိတ်ဆက်အချက်အလက်များကို `.env` တွင်ထားသည်။
-- `deleted_at` မရှိသေးသော စာရင်းများကိုသာ UI တွင်ပြသသည်။ User ဖျက်လိုက်သည့် data ကို database ပေါ်တွင် `deleted_at` နှင့် `deletion_reason` ဖြင့်သိမ်းထားသည်။
-- စတင်ရန် `npm start` သို့မဟုတ် `start-app.bat` ကိုအသုံးပြုပါ။
+- `deliveries` stores audit records and their `pending` or `synced` synchronization status.
+- `deletions` stores record IDs awaiting server deletion.
+- `credentials` stores an email, random salt, and SHA-256 password verifier.
 
-## Gmail အကောင့်များ
+Passwords are not stored in plaintext in localStorage or IndexedDB.
 
-- Gmail အသစ်ဖြင့် ပထမဆုံးဝင်သည့်အခါ password `123456` သုံးပါက account အသစ်ကို အလိုအလျောက်ဖန်တီးသည်။
-- Gmail တစ်ခုစီတွင် password သီးခြားပြောင်းနိုင်သည်။
-- Password reset ပြုလုပ်ပါက account အတွက် password ကို `123456` သို့ပြန်ထားသည်။
+## PWA support
+
+- `manifest.json` provides installable PWA metadata.
+- `sw.js` caches application HTML, CSS, JavaScript, images, icons, and other static assets.
+- API requests are never served from the Service Worker cache.
+- The application shows Online, Offline, and Connection restored statuses.
+- Pending records synchronize automatically when server connectivity returns.
+
+## Synchronization
+
+The existing MySQL backend provides these APIs:
+
+- `GET /api/deliveries`
+- `POST /api/deliveries/sync`
+- `POST /api/account/login`
+- `POST /api/account/change`
+- `POST /api/account/reset`
+
+Synchronization uses stable record IDs for idempotent upserts and explicit deleted IDs for safe removals.
+
+## Project files
+
+- `index.html` - Application entry redirect
+- `Dashboard.html` / `Dashboard.css` - Dashboard
+- `Aduit.html` / `Aduit.css` - Audit Detail page
+- `History.html` / `History.css` - Audit history
+- `app.js` - Audit CRUD, calculations, filtering, and synchronization
+- `offline-db.js` - IndexedDB storage
+- `auth.js` - Authentication and connection status
+- `login.html` / `login.css` - Login page
+- `change.html` / `change.css` - Password change page
+- `server.js` - Node.js and MySQL server
+- `schema.sql` - MySQL database schema
+- `manifest.json` - PWA manifest
+- `sw.js` - Service Worker
+- `start-app.bat` - Windows startup script

@@ -276,7 +276,7 @@ button { cursor: pointer; }
     display: block;
     margin-bottom: 4px;
     color: var(--muted);
-    content: "စုစုပေါင်း";
+    content: "Total";
     font-size: 10px;
   }
   .item-table .line-total { padding: 0; text-align: left; font-weight: 700; }
@@ -287,6 +287,6 @@ button { cursor: pointer; }
     color: var(--muted);
     font-size: 10px;
   }
-  .item-table td:nth-child(2)::before { content: "အရေအတွက်"; }
-  .item-table td:nth-child(3)::before { content: "တစ်ခုတန်ဖိုး"; }
+  .item-table td:nth-child(2)::before { content: "Quantity"; }
+  .item-table td:nth-child(3)::before { content: "Unit price"; }
 }

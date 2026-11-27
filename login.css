@@ -331,10 +331,36 @@ body[data-auth-page="login"] .auth-button:hover {
 
 body[data-auth-page="login"] .reset-link {
   display: block;
-  margin: -2px 0 10px auto;
+  width: fit-content;
+  margin: 0;
   padding: 3px 0;
   color: #2478a5;
   text-align: right;
+}
+
+body[data-auth-page="login"] .login-help-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -2px 0 10px;
+  font-size: 12px;
+}
+
+body[data-auth-page="login"] .forgot-password-text {
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: #587589;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+body[data-auth-page="login"] .forgot-password-text:hover {
+  color: #2478a5;
+  text-decoration: underline;
 }
 
 body[data-auth-page="login"] .reset-link:hover {

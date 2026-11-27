@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="my">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,28 +7,29 @@
   <title>Daily Audit - History</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="History.css">
+  <script src="offline-db.js" defer></script>
   <script src="auth.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body data-page="history">
   <header class="topbar">
-    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Menu ဖွင့်ရန်" aria-controls="main-nav" aria-expanded="false">☰</button>
-    <a class="brand" href="Dashboard.html" aria-label="Daily Audit Dashboard"><span class="brand-mark" aria-hidden="true">DA</span><span><span class="eyebrow brand-caption">နေ့စဉ်ပစ္စည်းစာရင်း</span><span class="brand-title">Daily Audit</span></span></a>
-    <div class="top-actions"><button class="button button-outline" id="export-button" type="button">Excel အတွက် CSV ထုတ်ရန်</button><a class="button button-light account-link" href="change.html">Password ပြောင်းရန်</a><button class="button button-light" id="logout-button" type="button">Logout</button></div>
+    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Open menu" aria-controls="main-nav" aria-expanded="false">☰</button>
+    <a class="brand" href="Dashboard.html" aria-label="Daily Audit Dashboard"><span class="brand-mark">DA</span><span><span class="eyebrow brand-caption">Daily item audit</span><span class="brand-title">Daily Audit</span></span></a>
+    <div class="top-actions"><button class="button button-outline" id="export-button" type="button">Print / PDF</button><button class="button button-outline" id="csv-export-button" type="button">CSV</button><a class="button button-light account-link" href="change.html">Change Password</a><button class="button button-light" id="logout-button" type="button">Logout</button></div>
   </header>
-  <nav class="main-nav" id="main-nav" aria-label="အဓိကစာမျက်နှာများ"><div class="nav-inner"><a class="nav-link" href="Dashboard.html">Dashboard</a><a class="nav-link" href="Aduit.html">နေ့စဉ်စာအုပ် / Detail</a><a class="nav-link is-active" href="History.html" aria-current="page">History</a><a class="nav-link" href="change.html">Password ပြောင်းရန်</a></div></nav>
-  <button class="sidebar-backdrop" id="sidebar-backdrop" type="button" aria-label="Menu ပိတ်ရန်"></button>
+  <nav class="main-nav" id="main-nav" aria-label="Main pages"><div class="nav-inner"><a class="nav-link" href="Dashboard.html">Dashboard</a><a class="nav-link" href="Aduit.html">Audit Detail</a><a class="nav-link is-active" href="History.html" aria-current="page">History</a><a class="nav-link" href="change.html">Change Password</a></div></nav>
+  <button class="sidebar-backdrop" id="sidebar-backdrop" type="button" aria-label="Close menu"></button>
   <main class="page">
     <section id="history-page" class="page-view">
-      <div class="intro detail-intro"><div><p class="eyebrow">JSON မှတ်တမ်း</p><h1>History</h1><p>သိမ်းထားသော စာရင်းအားလုံးကို ရက်စွဲ၊ အမည်နှင့် ပစ္စည်းဖြင့် ရှာဖွေနိုင်သည်။</p></div><div class="history-actions"><button class="button button-light" id="import-json-button" type="button">Fileထည့်ရန်</button><button class="button button-primary" id="export-json-button" type="button">Fileထုတ်ရန်</button><input id="import-json-input" type="file" accept=".json,application/json" hidden></div></div>
+      <div class="intro detail-intro"><div><p class="eyebrow">Audit history</p><h1>History</h1><p>Search all saved records by date, name, or item.</p></div><div class="history-actions"><button class="button button-light" id="import-json-button" type="button">Import File</button><button class="button button-primary" id="export-json-button" type="button">Export File</button><input id="import-json-input" type="file" accept=".json,application/json" hidden></div></div>
       <section class="panel history-panel">
-        <div class="section-heading records-heading"><div><p class="eyebrow">အသေးစိတ်မှတ်တမ်း</p><h2>စာရင်းအဟောင်းများ</h2></div><div class="filter-tools"><label class="field filter-field search-field"><span>ပစ္စည်း / အမည်ဖြင့် ရှာရန်</span><input id="history-filter-text" type="search" placeholder="အမည်ရိုက်ထည့်ပါ"></label><label class="field filter-field"><span>ရက်စွဲဖြင့် ရှာရန်</span><input id="history-filter-date" type="date"></label><button class="button button-light clear-filter" id="history-clear-filter" type="button">အားလုံး</button></div></div>
-        <div id="history-empty" class="empty-state"><span class="empty-icon" aria-hidden="true">▤</span><strong id="history-empty-title">စာရင်းမရှိသေးပါ</strong><span id="history-empty-description">Detail စာမျက်နှာတွင် စာရင်းသိမ်းပြီးနောက် History တွင်တွေ့ရပါမည်။</span></div>
+        <div class="section-heading records-heading"><div><p class="eyebrow">Detailed history</p><h2>Previous records</h2></div><div class="filter-tools"><label class="field filter-field search-field"><span>Search by item or name</span><input id="history-filter-text" type="search" placeholder="Enter a name"></label><label class="field filter-field"><span>Search by date</span><input id="history-filter-date" type="date"></label><button class="button button-light clear-filter" id="history-clear-filter" type="button">All</button></div></div>
+        <div id="history-empty" class="empty-state"><span class="empty-icon" aria-hidden="true">▤</span><strong id="history-empty-title">No records yet</strong><span id="history-empty-description">Saved records appear here after being added on the Detail page.</span></div>
         <div id="history-list" class="deliveries-list"></div>
       </section>
       <p id="history-message" class="app-message" role="status" aria-live="polite"></p>
     </section>
   </main>
-  <footer class="footer">Daily Audit <span>·</span> သင့်စက်၏ ဘရောက်ဇာတွင်သာ သိမ်းဆည်းထားသည်</footer>
+  <footer class="footer"></footer>
 </body>
 </html>

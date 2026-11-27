@@ -71,22 +71,12 @@ async function initializeDatabase() {
   for (const statement of schema.split(";").map((part) => part.trim()).filter(Boolean)) {
     await connection.query(statement);
   }
-  const [categoryColumns] = await connection.query(`
-    SELECT column_name
-    FROM information_schema.columns
-    WHERE table_schema = DATABASE()
-      AND table_name = 'delivery_items'
-      AND column_name = 'category'
-  `);
-  if (categoryColumns.length === 0) {
-    await connection.query("ALTER TABLE delivery_items ADD COLUMN category VARCHAR(80) NOT NULL DEFAULT 'အထွေထွေ' AFTER item_name");
-  }
   await connection.release();
 }
 
 async function getDeliveries() {
   const [rows] = await pool.query(`
-    SELECT d.*, i.id AS item_id, i.item_name, i.category, i.quantity, i.unit_price
+    SELECT d.*, i.id AS item_id, i.item_name, i.quantity, i.unit_price
     FROM deliveries d
     LEFT JOIN delivery_items i ON i.delivery_id = d.id
     WHERE d.deleted_at IS NULL
@@ -111,7 +101,6 @@ async function getDeliveries() {
     if (row.item_id) {
       map.get(row.id).items.push({
         name: row.item_name,
-        category: row.category || "အထွေထွေ",
         quantity: Number(row.quantity),
         unitPrice: Number(row.unit_price)
       });
@@ -120,23 +109,24 @@ async function getDeliveries() {
   return [...map.values()];
 }
 
-async function syncDeliveries(deliveries) {
+async function syncDeliveries(deliveries, deletedIds = []) {
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
-    const ids = deliveries.map((delivery) => String(delivery.id));
+    const ids = deletedIds.map((id) => String(id)).filter(Boolean);
     if (ids.length) {
       await connection.query(
-        `UPDATE deliveries SET deleted_at=NOW(), deletion_reason='Removed by user' WHERE deleted_at IS NULL AND id NOT IN (?)`,
+        `UPDATE deliveries SET deleted_at=NOW(), deletion_reason='Removed by user' WHERE deleted_at IS NULL AND id IN (?)`,
         [ids]
-      );
-    } else {
-      await connection.query(
-        `UPDATE deliveries SET deleted_at=NOW(), deletion_reason='Removed by user' WHERE deleted_at IS NULL`
       );
     }
 
     for (const delivery of deliveries) {
+      if (ids.includes(String(delivery.id))) continue;
+      await connection.query(
+        "UPDATE deliveries SET deleted_at=NULL, deletion_reason=NULL WHERE id=?",
+        [String(delivery.id)]
+      );
       await connection.query(`
         INSERT INTO deliveries
           (id, delivery_date, movement_type, truck, supplier, prepared_by, paid_amount, created_at, updated_at, deleted_at)
@@ -165,8 +155,8 @@ async function syncDeliveries(deliveries) {
       await connection.query("DELETE FROM delivery_items WHERE delivery_id=?", [String(delivery.id)]);
       for (const item of delivery.items || []) {
         await connection.query(
-          "INSERT INTO delivery_items (delivery_id,item_name,category,quantity,unit_price) VALUES (?,?,?,?,?)",
-          [String(delivery.id), String(item.name), String(item.category || "အထွေထွေ"), Number(item.quantity), Number(item.unitPrice)]
+          "INSERT INTO delivery_items (delivery_id,item_name,quantity,unit_price) VALUES (?,?,?,?)",
+          [String(delivery.id), String(item.name), Number(item.quantity), Number(item.unitPrice)]
         );
       }
     }
@@ -197,7 +187,7 @@ async function handleApi(request, response, urlPath) {
       json(response, 400, { error: "deliveries must be a list" });
       return true;
     }
-    await syncDeliveries(body.deliveries);
+    await syncDeliveries(body.deliveries, Array.isArray(body.deletedIds) ? body.deletedIds : []);
     json(response, 200, { deliveries: await getDeliveries() });
     return true;
   }

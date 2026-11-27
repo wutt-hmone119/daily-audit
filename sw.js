@@ -1,4 +1,4 @@
-const CACHE_NAME = "daily-audit-v8";
+const CACHE_NAME = "daily-audit-v9";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -14,8 +14,10 @@ const APP_FILES = [
   "./Aduit.css",
   "./History.html",
   "./History.css",
+  "./styles.css",
   "./app.js",
   "./auth.js",
+  "./offline-db.js",
   "./manifest.json",
   "./icon.svg",
   "./icon-192.png",
@@ -36,6 +38,10 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  if (new URL(event.request.url).pathname.startsWith("/api/")) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
   event.respondWith(
     fetch(event.request)
       .then((response) => {

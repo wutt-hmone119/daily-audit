@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS delivery_items (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   delivery_id VARCHAR(100) NOT NULL,
   item_name VARCHAR(100) NOT NULL,
-  category VARCHAR(80) NOT NULL DEFAULT 'အထွေထွေ',
   quantity DECIMAL(20,4) NOT NULL,
   unit_price DECIMAL(20,2) NOT NULL,
   PRIMARY KEY (id),
